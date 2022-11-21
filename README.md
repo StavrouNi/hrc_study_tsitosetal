@@ -1,2 +1,6 @@
-# hrc_study_tsitosetala
+
+# Description
 TODO
+
+# arXiv
+To be uploaded
