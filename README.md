@@ -1,7 +1,24 @@
 # Human-Agent Co-Learning on a shared task
 
+## Citation 
+
+If you want to cite this work, please use the following bibtex:
+
+```python
+@misc{https://doi.org/10.48550/arxiv.2211.13070,
+  doi = {10.48550/ARXIV.2211.13070},
+  url = {https://arxiv.org/abs/2211.13070},
+  author = {Tsitos, Athanasios C. and Dagioglou, Maria},
+  keywords = {Robotics (cs.RO), Artificial Intelligence (cs.AI), Human-Computer Interaction (cs.HC), FOS: Computer and information sciences, FOS: Computer and information sciences},
+  title = {Enhancing team performance with transfer-learning during real-world human-robot collaboration},
+  publisher = {arXiv},
+  year = {2022},
+  copyright = {Creative Commons Attribution 4.0 International}
+}
+```
+
 ## Description
-A human-agent collaborative game in which the team needs to co-operate in order to control the position of the end-effector(EE) of a robotic manipulator in a 2D plane, as shown in the following figure. Collaborative learning is achieved through Deep Reinforcement Learning (DRL).
+A human-agent collaborative game in which the team needs to co-operate in order to control the position of the end-effector(EE) of a robotic manipulator in a 2D plane, as shown in the following figure. Collaborative learning is achieved through Deep Reinforcement Learning (DRL). 
 
 ![setup](https://github.com/ThanasisTs/human_robot_collaborative_learning/blob/main/pictures/setup.png)
 
@@ -61,3 +78,4 @@ If you want to run the baseline version, replace the `roslaunch human_robot_coll
 The rest are default folders of a ROS package.
 
 [1] Christodoulou, Petros. "Soft actor-critic for discrete action settings." arXiv preprint arXiv:1910.07207 (2019).
+
