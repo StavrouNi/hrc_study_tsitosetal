@@ -1,10 +1,10 @@
-#!/home/ttsitos/catkin_ws/src/transfer_learning_SAC/env/bin/python
+#!/usr/bin/env python
 import rospy
 from std_msgs.msg import Float64, Bool
 from geometry_msgs.msg import Twist
 from cartesian_state_msgs.msg import PoseTwist
-from transfer_learning_SAC.srv import *
-from transfer_learning_SAC.msg import Score
+from human_robot_collaborative_learning.srv import *
+from human_robot_collaborative_learning.msg import Score
 from utils import *
 
 import math
