@@ -78,7 +78,7 @@ class Actor(nn.Module):
         self.checkpoint_dir = chkpt_dir
         self.checkpoint_file = os.path.join(self.checkpoint_dir, name + '_sac')
         # os.makedirs(self.checkpoint_dir, exist_ok=True)
-        os.chdir('/home/ttsitos')
+        os.chdir(os.path.expanduser('~'))
         if not os.path.exists(self.checkpoint_dir):
             os.makedirs(self.checkpoint_dir)
 
