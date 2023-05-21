@@ -53,9 +53,9 @@ The game can be played using two different conditions.
 A version of the game exists where the DRL agent is not used and the EE can move only to the human-controlled axis (x-axis). This way, the human can gain expertise on how to control the motion of the EE in his axis.
 
 ## Installation
-* Run `sudo apt-get install ros-<ROS-DISTRO>-teleop-twist-keyboard`. This will install the ROS package for sending commands from the keyboard.
-* Run `source install_dependencies/install.sh`. A python virtual environemnt will be created and the necessary libraries will be installed. Furthermore, the directory of the repo will be added to the `PYTHONPATH` environmental variable.
-
+* Run `sudo apt-get install ros-<ROS-DISTRO>-teleop-twist-keyboard python-sklearn ffmpeg`. This will install the ROS package for sending commands from the keyboard.
+* Run `source install_dependencies/install.sh`. A python virtual environemnt will be created and the necessary libraries will be installed. Furthermore, the directory of the repo will be added to the `PYTHONPATH` environmental variable. In case you do not wish to work in a separate environment, run `pip install -r install_dependencies/requirements.txt`
+* Check the `*.yaml` files and change the paths based on your setup
 
 ## Run
 Before running anything go to the `game_control_sign.py` file and change the python interpreter path to the absolute path of the virtual environment in your machine.
@@ -65,6 +65,13 @@ The game has been tested only on the real robot and not on a simulated environme
 * Run `roslaunch manos_bringup manos_bringup.launch robot_ip:=<robot_ip> kinematics_config:=<path_to_catkin_ws>/src/manos/manos_bringup/config/manos_calibration.yaml`. This will launch the UR3 drivers and the CVCI.
 * Run `roslaunch human_robot_collaborative_learning game.launch`. This will launch the entire game. This includes the node of game loop, the node for the robot motion generation, the visualization node and the SAC implementation.
 * Run `rosrun teleop_twist_keyboard teleop_twist_keyboard.py`. This launches the keyboard node.
+
+<b>Note</b>: The first time you run the commands, a folder named `games_info` will be created. Each time you play a new set of games (run the commands), a folder will be created in the `games_info` folder which will contain data about the episodes. The name of the folder has the following structure:
+
+* If no transder learning is applied: `<total_update_cycles>K_<learn_every_n_episodes>_<action_duration>ms_<participant_name>_<no_TL>_<increasing_number>`
+* if transfer learning is applied: `<total_update_cycles>K_<learn_every_n_episodes>_<action_duration>ms_<participant_name>_<increasing_number>`
+
+The `<total_update_cycles>`, `<learn_every_n_episodes>`, `<action_duration>` and `<participant_name>` are parameters set [here](https://github.com/Roboskel-Manipulation/human_robot_collaborative_learning/blob/main/config/rl_params.yaml) while the `<increasing_number>` is set automatically and depends on how many times the same game configuration has been used before.
 
 <b>Note</b>: Be aware that the mouse cursor needs to be in the terminal window from which the `teleop_twist_keyboard` was launched so that keyboard commands can be sent to the robot.
 
@@ -78,4 +85,3 @@ If you want to run the baseline version, replace the `roslaunch human_robot_coll
 The rest are default folders of a ROS package.
 
 [1] Christodoulou, Petros. "Soft actor-critic for discrete action settings." arXiv preprint arXiv:1910.07207 (2019).
-
