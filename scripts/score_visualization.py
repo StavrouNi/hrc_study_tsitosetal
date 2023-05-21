@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import pygame as pg
-from transfer_learning_SAC.msg import Score
+from human_robot_collaborative_learning.msg import Score
 
 class ShowScore():
     def __init__(self):
