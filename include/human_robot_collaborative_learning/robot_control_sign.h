@@ -4,7 +4,7 @@
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/Accel.h>
 #include <cartesian_state_msgs/PoseTwist.h>
-#include <hrc_study_tsitosetala/Reset.h>
+#include <human_robot_collaborative_learning/Reset.h>
 
 #include <vector>
 #include <math.h>
@@ -31,7 +31,7 @@ public:
 
 	AccCommand();
 
-	bool reset_game(hrc_study_tsitosetala::Reset::Request& req, hrc_study_tsitosetala::Reset::Response& res);
+	bool reset_game(human_robot_collaborative_learning::Reset::Request& req, human_robot_collaborative_learning::Reset::Response& res);
 
 	void ee_state_callback(const cartesian_state_msgs::PoseTwist::ConstPtr &ee_state);
 

@@ -4,7 +4,7 @@
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/Accel.h>
 #include <cartesian_state_msgs/PoseTwist.h>
-#include <hrc_study_tsitosetala/Reset.h>
+#include <human_robot_collaborative_learning/Reset.h>
 
 #include <vector>
 #include <math.h>
