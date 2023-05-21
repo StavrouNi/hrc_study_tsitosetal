@@ -2,8 +2,8 @@
 
 <launch>
 
-	<node name="robot_movement_generation" type="baseline" pkg="hrc_study_tsitosetala" output="screen">
-		<rosparam file="$(find hrc_study_tsitosetala)/config/baseline.yaml" command="load"/>
+	<node name="robot_movement_generation" type="baseline" pkg="human_robot_collaborative_learning" output="screen">
+		<rosparam file="$(find human_robot_collaborative_learning)/config/baseline.yaml" command="load"/>
 	</node>
 	
 </launch>
