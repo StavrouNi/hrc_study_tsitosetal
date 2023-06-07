@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(hrc_study_tsitosetala)
+project(human_robot_collaborative_learning)
 
 add_compile_options(-std=c++11)
 
@@ -11,7 +11,6 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   message_generation
 )
-
 
 add_message_files(
   FILES

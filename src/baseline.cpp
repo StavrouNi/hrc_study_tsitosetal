@@ -4,7 +4,7 @@
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/Accel.h>
 #include <cartesian_state_msgs/PoseTwist.h>
-#include <hrc_study_tsitosetala/Reset.h>
+#include <human_robot_collaborative_learning/Reset.h>
 
 #include <iostream>
 #include <fstream>
@@ -54,7 +54,7 @@ AccCommand::AccCommand(){
 	n.param("robot_movement_generation/max_vel", this->max_vel, 0.0f);
 	n.param("robot_movement_generation/min_y", this->min_y, 0.0f);
 	n.param("robot_movement_generation/max_y", this->max_y, 0.0f);
-    n.param("robot_movement_generation/participant_file", this->participant_file, std::string("/home/ttsitos/catkin_ws/src/hrc_study_tsitosetala/games_info/baseline/thanasis"));
+    n.param("robot_movement_generation/participant_file", this->participant_file, std::string("/home/ttsitos/catkin_ws/src/human_robot_collaborative_learning/games_info/baseline/thanasis"));
 	n.param("robot_movement_generation/start_position", this->start_pos, std::vector<float>(0));
 	n.param("robot_movement_generation/position_tolerance", this->position_tolerance, 0.0f);
 	n.param("robot_movement_generation/velocity_tolerance", this->velocity_tolerance, 0.0f);

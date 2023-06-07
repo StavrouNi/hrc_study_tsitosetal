@@ -1,4 +1,4 @@
-#include "hrc_study_tsitosetala/robot_control_sign.h"
+#include "human_robot_collaborative_learning/robot_control_sign.h"
 
 AccCommand::AccCommand(){
 	this->spinner = boost::make_shared<ros::AsyncSpinner>(3);
@@ -30,7 +30,7 @@ AccCommand::AccCommand(){
 	this->spinner->start();
 }
 
-bool AccCommand::reset_game(hrc_study_tsitosetala::Reset::Request& req, hrc_study_tsitosetala::Reset::Response& res){
+bool AccCommand::reset_game(human_robot_collaborative_learning::Reset::Request& req, human_robot_collaborative_learning::Reset::Response& res){
 	this->reset = true;
 	this->cmd_x = false;
 	this->cmd_y = false;
