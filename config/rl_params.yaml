@@ -1,12 +1,12 @@
 Game:
   participant_name: "CO"
-  full_path: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetala/"
+  full_path: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/"
   train_model: False # True if no training happens
   load_model_training: True # True if loading model to continue training
-  load_model_training_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetala/rl_models/expert" # Location of the model 
+  load_model_training_dir: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/rl_models/expert" # Location of the model 
   load_model_transfer_learning: False # True if loading model for transfer_learning 
-  load_model_transfer_learning_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetala/rl_models/expert" # Location of the model for transfer learning 
-  load_model_testing_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetala/rl_models/expert" # Location of the model for testing
+  load_model_transfer_learning_dir: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/rl_models/expert" # Location of the model for transfer learning 
+  load_model_testing_dir: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/rl_models/expert" # Location of the model for testing
   save: True # Save models and logs
   goal: [-0.264, 0.242] # goal position
   goal_distance: 0.01 # maximum distance from goal in order to win
