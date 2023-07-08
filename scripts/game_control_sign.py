@@ -6,6 +6,14 @@ from cartesian_state_msgs.msg import PoseTwist
 from human_robot_collaborative_learning.srv import *
 from human_robot_collaborative_learning.msg import Score
 from utils import *
+import curses
+
+
+from std_srvs.srv import Empty#
+from gazebo_msgs.srv import SetModelConfiguration#
+from controller_manager_msgs.srv import SwitchController#
+
+import time#
 
 import math
 import numpy as np
@@ -17,11 +25,27 @@ from pydub.playback import play
 import threading
 
 class RL_Control:
+
+	def wait_for_keypress(self): #function to stop the game after 10 first test games and wait for key press
+    	    stdscr = curses.initscr()
+    	    curses.noecho()
+    	    stdscr.nodelay(True)
+            stdscr.refresh()
+    	    print("Press any key to continue...")
+            while True:
+                key = stdscr.getch()
+                if key != -1:
+                    curses.endwin()
+                    return
+
+
 	def __init__(self):
+		self.transfer_method= rospy.get_param("/rl_control/Game/lfd_transfer", False)	# if true Lerning from demonstations TF will be used, different setup of the experiment
+		
 		self.train_model = rospy.get_param('rl_control/Game/train_model', False)
 		self.transfer_learning = rospy.get_param("rl_control/Game/load_model_transfer_learning", False)
 		if self.train_model:
-			self.load_model_for_training = rospy.get_param("rl_control/Game/load_model_training", False)
+			self.load_model_for_training = rospy.get_param("rl_control/Game/load_model_training", True)
 			if self.load_model_for_training:
 				self.load_model_for_training_dir = rospy.get_param("rl_control/Game/load_model_training_dir", "dir")
 				self.agent = get_SAC_agent(observation_space=[4], chkpt_dir=self.load_model_for_training_dir)
@@ -29,7 +53,8 @@ class RL_Control:
 				rospy.logwarn("Successfully loaded model at {} for training".format(self.load_model_for_training_dir))
 			else:
 				self.agent = get_SAC_agent(observation_space=[4])
-				rospy.logwarn("User has not specified any model for training. Gonna initialize random agent")
+				rospy.logwarn("User has not specified any model for training. Gonna initialize random agent")#initialization??
+
 				
 			if self.transfer_learning:
 				load_model_for_transfer_learning_dir = rospy.get_param("rl_control/Game/load_model_transfer_learning_dir", "dir")
@@ -46,7 +71,7 @@ class RL_Control:
 			self.agent.load_models()
 			rospy.logwarn("Successfully loaded model at {} for testing".format(self.load_model_for_testing_dir))
 
-		# Game parameters		
+		# Game parameters
 		self.goal = rospy.get_param('rl_control/Game/goal', [0, 0])
 		self.goal_dis = rospy.get_param('rl_control/Game/goal_distance', 2)
 		self.goal_vel = rospy.get_param('rl_control/Game/goal_velocity', 2)
@@ -70,7 +95,8 @@ class RL_Control:
 		self.update_cycles = self.total_update_cycles
 		self.best_episode_reward = -100 - 1*self.max_timesteps
 		self.win_reward = rospy.get_param('rl_control/Experiment/win_reward', 10)
-		self.lose_reward = rospy.get_param('rl_control/Experiment/lose_reward', -1)	
+		self.lose_reward = rospy.get_param('rl_control/Experiment/lose_reward', -1)
+		self.expert_action_flag = False	
 		self.reward_history = []
 		self.episode_duration = []
 		self.travelled_distance = []
@@ -135,6 +161,7 @@ class RL_Control:
 			self.ppr_threshold -= 0.01
 		rospy.wait_for_service('reset')
 		try:
+			#self.set_robot_initial_position()
 			reset_game = rospy.ServiceProxy('reset', Reset)
 			rospy.loginfo('Resetting the game')
 			reset_game()
@@ -242,6 +269,7 @@ class RL_Control:
 
 	def compute_agent_action(self, randomness_request=None):
 		assert randomness_request != None, 'randomness_request is None'
+		self.expert_action_flag = False
 		if self.test_agent_flag:
 			if self.train_model:
 				rospy.loginfo("Testing with random agent") if randomness_request < self.randomness_threshold else rospy.loginfo("Testing with trained agent")
@@ -255,6 +283,7 @@ class RL_Control:
 				rospy.loginfo("Training with TL")
 				self.ppr_request = np.random.randint(100)/100
 				if self.ppr_request < self.ppr_threshold:
+					self.expert_action_flag = True  # Expert action is taken
 					print('Expert action')
 					self.agent_action = self.expert_agent.actor.sample_act(self.observation)
 				else:
@@ -270,6 +299,12 @@ class RL_Control:
 					rospy.loginfo("Training existing model")
 					self.agent_action = self.agent.actor.sample_act(self.observation)
 					self.save_models = True
+					
+		# Append the expert action flag to state_info based on the test_agent_flag
+
+        	#self.test_state_info.append((expert_action_flag,))
+
+ 
 		agent_action_msg = Float64()
 		agent_action_msg.data = self.agent_action
 		self.agent_action_pub.publish(agent_action_msg)
@@ -325,9 +360,11 @@ class RL_Control:
 		self.test_agent_flag = True
 		rospy.loginfo("Begin testing")
 		for test_i_episode in range(1, self.test_max_episodes+1):
+
 			self.test_count += 1
 			self.reset()
 			self.run(test_i_episode)
+			
 		self.test_agent_flag = False
 
 	def train(self, i_episode):
@@ -358,18 +395,34 @@ class RL_Control:
 			raise Exception("Choose a valid scheduling procedure")
 
 def game_loop(game):
-	if game.train_model:
+	if game.transfer_method:
+		rospy.logwarn("Running LFD experiment")
 		rospy.loginfo('Training')
-		game.test()
-		for i_episode in range(1, game.max_episodes+1):
-			game.reset()
-			game.run(i_episode)
-			game.train(i_episode)
-			if i_episode % game.test_interval == 0:
-				game.test()
+		game.test() #testing with random agent BASELINE
+		game.wait_for_keypress() # Pause in order to ask a question 
+			#for i_episode in range(1, game.max_episodes+1): #total number of games 70 (we will see)
+				
+			
+		
 	else:
-		rospy.loginfo('Testing')
-		game.test()
+		if game.train_model:
+			rospy.loginfo('Training')
+			game.test() #testing with random agent
+			game.wait_for_keypress() # Pause in order to ask a question 
+			for i_episode in range(1, game.max_episodes+1):
+				game.reset()
+				game.run(i_episode)
+				game.train(i_episode)
+				if i_episode % game.test_interval == 0:
+					game.test()
+				#if i_episode % 1 == 0:################# FOR DEBUGGING OF SAVED DATAA
+               				#save_data(game, data_dir)  # Save the data after 10 episodes
+                			#plot_statistics(game, plot_dir)  # Plot or save the statistics after 10 episodes
+		else:
+			rospy.loginfo('Testing')
+			game.test()
+		
+		
 
 if __name__ == "__main__":
 
@@ -380,6 +433,7 @@ if __name__ == "__main__":
 	start_experiment_time = rospy.get_time()
 	game_loop(game)
 	end_experiment_time = rospy.get_time()
+
 	game.reset()
 	
 	save_data(game, data_dir)

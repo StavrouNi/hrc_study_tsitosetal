@@ -1,0 +1,8 @@
+<?xml version="2.0"?>
+<launch>
+    <node name="fake_cartesian_state_sim" type="fake_cartesian_state_sim.py" pkg="fake_cartesian_state_sim" output="screen"/>
+    <node name="fake_game_viz" type="fake_game_viz.py" pkg="human_robot_collaborative_learning" output="screen"/>
+    <arg name="rviz_config" default="$(find human_robot_collaborative_learning)/config/fake_game.rviz" />
+  <node name="rviz" pkg="rviz" type="rviz" required="true" args="-d $(arg rviz_config)" />
+
+</launch>

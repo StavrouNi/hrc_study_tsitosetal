@@ -1,5 +1,5 @@
 # Participant file used only in baseline.cpp
-participant_file: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetala/games_info/baseline/EM"
+participant_file: "/opt/ros/catkin_ws/src/human_robot_collaborative_learning/games_info/baseline/EM"
 
 # Limits of EE velocity
 max_vel: 0.2

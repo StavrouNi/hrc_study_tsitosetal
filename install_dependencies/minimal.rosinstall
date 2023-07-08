@@ -1,0 +1,28 @@
+- git:
+    local-name: manos
+    uri: https://github.com/Roboskel-Manipulation/manos.git
+    version: updated_driver
+- git:
+    local-name: cartesian_trajectory_tracking
+    uri: https://github.com/Roboskel-Manipulation/cartesian_trajectory_tracking.git
+    version: updated_repo
+- git:
+    local-name: schunk_grippers
+    uri: https://github.com/gstavrinos/schunk_grippers
+    version: f1ef0990b129e5e910c309f06d4e1211f063117d
+- git:
+    local-name: trajectory_custom_msgs
+    uri: https://github.com/Roboskel-Manipulation/trajectory_custom_msgs.git
+    version: main
+- git:
+    local-name: universal_robot
+    uri: https://github.com/ros-industrial/universal_robot.git
+    version: 1.3.1
+- git:
+    local-name: Universal_Robots_ROS_Driver
+    uri: https://github.com/UniversalRobots/Universal_Robots_ROS_Driver.git
+    version: ec2beb65afd6be5373d1e21a86dd42a07e25b447
+- git:
+    local-name: fake_cartesian_state_sim
+    uri: https://github.com/gstavrinos/fake_cartesian_state_sim.git
+    version: master

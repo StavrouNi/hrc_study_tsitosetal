@@ -43,7 +43,7 @@ class ReplayBuffer:
         self.memory_size = memory_size
         self.next_idx = 0
 
-    # add the samples
+    # add the samples        #####see if i need to add another element after done (transition inf)
     def add(self, obs, action, reward, obs_, done):
         data = (obs, action, reward, obs_, done)
         if self.next_idx >= len(self.storage):
@@ -70,6 +70,78 @@ class ReplayBuffer:
     def sample(self, batch_size):
         idxes = [random.randint(0, len(self.storage) - 1) for _ in range(batch_size)]
         return self._encode_sample(idxes)
+        
+    #adding thdefs to load and save the 2 experts data 
+    # Save Buffer
+    def save_buffer(self, path):
+        np.save(path, self.storage)
+    
+    # Load Buffer
+    def load_buffer(self, path):
+        self.storage = np.load(path, allow_pickle=True).tolist()
+        
+        
+class Dual_ReplayBuffer:
+    """
+    Convert to numpy
+    """
+    def __init__(self, memory_size,replay_buffer,percentages):
+        self.storage = []
+        self.memory_size = memory_size
+        self.next_idx = 0
+        self.expert_storage = replay_buffer.storage
+        self.percentages = percentages
+
+    # add the samples
+    def add(self, obs, action, reward, obs_, done):
+        data = (obs, action, reward, obs_, done)
+        if self.next_idx >= len(self.storage):
+            self.storage.append(data)
+        else:
+            self.storage[self.next_idx] = data
+        # get the next idx
+        self.next_idx = (self.next_idx + 1) % self.memory_size
+
+    def get_size(self):
+        return len(self.storage)
+
+    # encode samples
+    def _encode_sample(self, idx,idx_exp):
+        obses, actions, rewards, obses_, dones = [], [], [], [], []
+        for i in idx:
+            data = self.storage[i]
+            obs, action, reward, obs_, done= data
+            obses.append(np.array(obs, copy=False))
+            actions.append(np.array(action, copy=False))
+            rewards.append(reward)
+            obses_.append(np.array(obs_, copy=False))
+            dones.append(done)
+            transition_infos.append(transition_info)
+        
+        for i in idx_exp:
+            data = self.expert_storage[i]
+            obs, action, reward, obs_, done = data
+            obses.append(np.array(obs, copy=False))
+            actions.append(np.array(action, copy=False))
+            rewards.append(reward)
+            obses_.append(np.array(obs_, copy=False))
+            dones.append(done)
+            
+
+        return np.array(obses), np.array(actions), np.array(rewards), np.array(obses_), np.array(dones)
+
+    # sample from the memory
+    def sample(self, batch_size, block_number):
+        idx_exp = [random.randint(0, len(self.expert_storage) - 1) for _ in range(int(batch_size*self.percentages[block_number]))]
+        idx = [random.randint(0, len(self.storage) - 1) for _ in range(int(batch_size*(1-self.percentages[block_number])))]
+        return self._encode_sample(idx,idx_exp)
+    # Save Buffer
+    def save_buffer(self, path):
+        np.save(path, self.storage)
+    
+    # Load Buffer
+    def load_buffer(self, path):
+        self.storage = np.load(path, allow_pickle=True).tolist()
 
 
 class Actor(nn.Module):
@@ -113,7 +185,7 @@ class Actor(nn.Module):
         torch.save(self.state_dict(), self.checkpoint_file)
 
     def load_checkpoint(self):
-        self.load_state_dict(torch.load(self.checkpoint_file))
+        self.load_state_dict(torch.load(self.checkpoint_file, map_location=torch.device('cpu')))
 
 
 class Critic(nn.Module):
@@ -121,6 +193,7 @@ class Critic(nn.Module):
         super(Critic, self).__init__()
         self.name = name
         self.checkpoint_dir = chkpt_dir
+        
         if chkpt_dir is not None:
             self.checkpoint_file = os.path.join(self.checkpoint_dir, name + '_sac')
             # os.makedirs(self.checkpoint_dir, exist_ok=True)
@@ -139,7 +212,7 @@ class Critic(nn.Module):
         torch.save(self.state_dict(), self.checkpoint_file)
 
     def load_checkpoint(self):
-        self.load_state_dict(torch.load(self.checkpoint_file))
+        self.load_state_dict(torch.load(self.checkpoint_file, map_location=torch.device('cpu')))
 
 
 class DuelQNet(nn.Module):
