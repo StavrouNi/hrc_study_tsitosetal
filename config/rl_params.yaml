@@ -1,12 +1,13 @@
 Game:
-  participant_name: "CO"
+  participant_name: "NIKOLAS"
   full_path: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/"
-  train_model: False # True if no training happens
-  load_model_training: True # True if loading model to continue training
-  load_model_training_dir: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/rl_models/expert" # Location of the model 
-  load_model_transfer_learning: False # True if loading model for transfer_learning 
+  lfd_transfer: True #true if we using learning from Demonstrations transfer learning
+  train_model: True # True if no training happens
+  load_model_training: False # True if loading model to continue training
+  load_model_training_dir: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/rl_models/98K_every10_uniform_200ms_NIKOLAS_no_TL_13" # Location of the model 
+  load_model_transfer_learning: True # True if loading model for transfer_learning 
   load_model_transfer_learning_dir: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/rl_models/expert" # Location of the model for transfer learning 
-  load_model_testing_dir: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/rl_models/expert" # Location of the model for testing
+  load_model_testing_dir: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/rl_models/98K_every10_uniform_200ms_NIKOLAS_no_TL_13" # Location of the model for testing
   save: True # Save models and logs
   goal: [-0.264, 0.242] # goal position
   goal_distance: 0.01 # maximum distance from goal in order to win
@@ -16,6 +17,7 @@ Game:
   start_audio: ["beep-07a.mp3", "beep-09.mp3"] # audio for starting the game
   rest_period: 180 # rest period between training-testing batches
   ppr_threshold: 0.7 # initial ppr probability
+
 
 SAC:
   # SAC parameters
@@ -34,7 +36,7 @@ SAC:
 # After each batch is completed, the model is trained. This procedure is repeated until `max_episodes` training episodes have been completed. 
 Experiment:
   max_episodes: 70  # Total training episodes per game
-  max_duration: 30  # Max duration of an episode (in seconds). An episode ends if the ball hits the target or if we reach the time limit
+  max_duration: 3  #30 Max duration of an episode (in seconds). An episode ends if the ball hits the target or if we reach the time limit
   test_interval: 10 # Test the current model after `test_interval` episodes
   action_duration: 0.2 # Time duration between consecutive RL agent actions
   scheduling: "uniform" # "uniform" or "descending"
@@ -49,5 +51,5 @@ Experiment:
 
   test:
     max_episodes: 10 # Total testing episodes in a training batch
-    max_duration: 30 # Max duration of an episode (in seconds). An episode ends if the ball hits the target or if we reach the time limit
+    max_duration: 1 #30 Max duration of an episode (in seconds). An episode ends if the ball hits the target or if we reach the time limit
 
