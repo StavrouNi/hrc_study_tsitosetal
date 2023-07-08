@@ -36,15 +36,63 @@ bool AccCommand::reset_game(human_robot_collaborative_learning::Reset::Request& 
 	this->cmd_y = false;
     srand(time(NULL));
 	std::vector<float> start_pos = this->start_positions[rand() % start_positions.size()];
+	
+	//Initializing the integral controller and derivative controllers
+	
+	float integral_error_x = 0;
+	float integral_error_y = 0;
+	float integral_error_z = 0;	
+	
+	float derivative_error_x = 0;
+	float derivative_error_y = 0;
+	float derivative_error_z = 0;
+	
+	float prev_error_x = 0;
+	float prev_error_y= 0;
+	float prev_error_z = 0;
+	
+	float Kp = 12.0; // Proportional gain
+	float Ki = 0.2; // Integral gain
+	float Kd=0;
+	
 	this->cmd_vel->linear.x = 0;
 	this->cmd_vel->linear.y = 0;
 	this->cmd_vel->linear.z = 0;
+	
 	this->pub.publish(*this->cmd_vel);
 	ros::Duration(5).sleep();
 	while (distance(this->state, start_pos) >= 0.0005){
-		this->cmd_vel->linear.x = start_pos[0] - this->state->pose.position.x;
-		this->cmd_vel->linear.y = start_pos[1] - this->state->pose.position.y;
-		this->cmd_vel->linear.z = start_pos[2] - this->state->pose.position.z;
+        	float error_x = start_pos[0] - this->state->pose.position.x;
+        	float error_y = start_pos[1] - this->state->pose.position.y;
+        	float error_z = start_pos[2] - this->state->pose.position.z;
+
+        	integral_error_x += error_x;
+        	integral_error_y += error_y;
+        	integral_error_z += error_z;
+        	
+        	derivative_error_x = error_x - prev_error_x;
+       	 	derivative_error_y = error_y - prev_error_y;
+        	derivative_error_z = error_z - prev_error_z;
+        	
+
+		this->cmd_vel->linear.x = Kp*error_x + Ki*integral_error_x + Kd*derivative_error_x;
+        	this->cmd_vel->linear.y = Kp*error_y + Ki*integral_error_y + Kd*derivative_error_y;
+        	this->cmd_vel->linear.z = Kp*error_z + Ki*integral_error_z + Kd*derivative_error_z;
+        	//this->cmd_vel->linear.z = 0;
+        	
+	        prev_error_x = error_x;
+        	prev_error_y = error_y;
+        	prev_error_z = error_z;
+        	
+	        ROS_WARN("Current  distance: %f", distance(this->state, start_pos));
+	        
+	        //ROS_WARN("Linear Velocity X: %f", this->cmd_vel->linear.x);
+    		//ROS_WARN("Linear Velocity Y: %f", this->cmd_vel->linear.y);
+    		//ROS_WARN("Linear Velocity Z: %f", this->cmd_vel->linear.z);
+    		
+		//this->cmd_vel->linear.x = start_pos[0] - this->state->pose.position.x;
+		//this->cmd_vel->linear.y = start_pos[1] - this->state->pose.position.y;
+		//this->cmd_vel->linear.z = start_pos[2] - this->state->pose.position.z;
 		this->pub.publish(*this->cmd_vel);
 		ros::Duration(0.008).sleep();
 	}
@@ -145,5 +193,6 @@ void AccCommand::run(){
 	this->agent_sub = this->n.subscribe("agent_action_topic", 100, &AccCommand::agent_callback, this);
 	this->state_sub = this->n.subscribe("ur3_cartesian_velocity_controller/ee_state", 100, &AccCommand::ee_state_callback, this);
 	this->train_sub = this->n.subscribe("train_topic", 100, &AccCommand::train_callback, this);
+	
 	ros::waitForShutdown();
 }
