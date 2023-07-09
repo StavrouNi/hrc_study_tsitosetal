@@ -1,7 +1,10 @@
 Game:
   participant_name: "NIKOLAS"
   full_path: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/"
+  #LfD arguments
   lfd_transfer: True #true if we using learning from Demonstrations transfer learning
+  lfd_expert_gameplay: True #true if the expert is playing and trainig an agent to collect demonstration and expert data and place them to the buffers
+  #games_to_capture: #The games that the Demonstrations buffer wil keep from the gameplay with the expert
   train_model: True # True if no training happens
   load_model_training: False # True if loading model to continue training
   load_model_training_dir: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/rl_models/98K_every10_uniform_200ms_NIKOLAS_no_TL_13" # Location of the model 

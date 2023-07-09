@@ -26,22 +26,11 @@ import threading
 
 class RL_Control:
 
-	def wait_for_keypress(self): #function to stop the game after 10 first test games and wait for key press
-    	    stdscr = curses.initscr()
-    	    curses.noecho()
-    	    stdscr.nodelay(True)
-            stdscr.refresh()
-    	    print("Press any key to continue...")
-            while True:
-                key = stdscr.getch()
-                if key != -1:
-                    curses.endwin()
-                    return
-
 
 	def __init__(self):
+
 		self.transfer_method= rospy.get_param("/rl_control/Game/lfd_transfer", False)	# if true Lerning from demonstations TF will be used, different setup of the experiment
-		
+		self.lfd_expert_gameplay = rospy.get_param("/rl_control/Game/lfd_expert_gameplay",False) #if true the expert is playing we give! to experts buffer and demonstrations buffer
 		self.train_model = rospy.get_param('rl_control/Game/train_model', False)
 		self.transfer_learning = rospy.get_param("rl_control/Game/load_model_transfer_learning", False)
 		if self.train_model:
@@ -53,15 +42,19 @@ class RL_Control:
 				rospy.logwarn("Successfully loaded model at {} for training".format(self.load_model_for_training_dir))
 			else:
 				self.agent = get_SAC_agent(observation_space=[4])
-				rospy.logwarn("User has not specified any model for training. Gonna initialize random agent")#initialization??
+				rospy.logwarn("User has not specified any model for training. Gonna initialize random agent")#initialization of new model of no existing model is set
 
 				
 			if self.transfer_learning:
-				load_model_for_transfer_learning_dir = rospy.get_param("rl_control/Game/load_model_transfer_learning_dir", "dir")
-				self.expert_agent = get_SAC_agent(observation_space=[4], chkpt_dir=load_model_for_transfer_learning_dir)
-				self.expert_agent.load_models()
-				self.ppr_threshold = rospy.get_param("rl_control/Game/ppr_threshold", 0.7)
-				rospy.logwarn('Successfully loaded model at {} for transfer learning'.format(load_model_for_transfer_learning_dir))
+				if self.transfer_method: #here we will initialize the Demonstrations buffer to give to the participant
+					rospy.logwarn("initialization of LfD parameters")
+
+				else: #here PPR method is used so we initialize the expert agent
+					load_model_for_transfer_learning_dir = rospy.get_param("rl_control/Game/load_model_transfer_learning_dir", "dir")
+					self.expert_agent = get_SAC_agent(observation_space=[4], chkpt_dir=load_model_for_transfer_learning_dir)
+					self.expert_agent.load_models()
+					self.ppr_threshold = rospy.get_param("rl_control/Game/ppr_threshold", 0.7)
+					rospy.logwarn('Successfully loaded model at {} for transfer learning'.format(load_model_for_transfer_learning_dir))
 			else:
 				rospy.logwarn("User has not loaded any models for transfer learning")
 		else:
@@ -270,7 +263,7 @@ class RL_Control:
 	def compute_agent_action(self, randomness_request=None):
 		assert randomness_request != None, 'randomness_request is None'
 		self.expert_action_flag = False
-		if self.test_agent_flag:
+		if self.test_agent_flag: #we are in testing state 
 			if self.train_model:
 				rospy.loginfo("Testing with random agent") if randomness_request < self.randomness_threshold else rospy.loginfo("Testing with trained agent")
 				self.e_greedy(randomness_request)
@@ -281,14 +274,19 @@ class RL_Control:
 		else:
 			if self.transfer_learning: 
 				rospy.loginfo("Training with TL")
-				self.ppr_request = np.random.randint(100)/100
-				if self.ppr_request < self.ppr_threshold:
-					self.expert_action_flag = True  # Expert action is taken
-					print('Expert action')
-					self.agent_action = self.expert_agent.actor.sample_act(self.observation)
-				else:
-					print('e greedy')
-					self.e_greedy(randomness_request)
+				if self.transfer_method: #if Learning from Demonstrations is true it will always play with participant agent, not expert agent
+					print('e greedy')  
+					print('lfD_Method')
+					self.e_greedy(randomness_request)					
+				else:  #else it computes the ppr_threshold for the expert agent
+					self.ppr_request = np.random.randint(100)/100
+					if self.ppr_request < self.ppr_threshold:
+						self.expert_action_flag = True  # Expert action is taken
+						print('Expert action')
+						self.agent_action = self.expert_agent.actor.sample_act(self.observation)
+					else:
+						print('e greedy')
+						self.e_greedy(randomness_request)
 				self.save_models = True
 			else:
 				if not self.load_model_for_training:
@@ -397,18 +395,28 @@ class RL_Control:
 def game_loop(game):
 	if game.transfer_method:
 		rospy.logwarn("Running LFD experiment")
-		rospy.loginfo('Training')
-		game.test() #testing with random agent BASELINE
-		game.wait_for_keypress() # Pause in order to ask a question 
-			#for i_episode in range(1, game.max_episodes+1): #total number of games 70 (we will see)
-				
-			
-		
+		if game.train_model:
+			rospy.loginfo('Training with LfD')
+			game.test() #testing with random agent
+			#game.wait_for_keypress() # Pause in order to ask a question 
+			grad_updates_duration = self.grad_updates()
+            		self.agent.save_models()			#first offline
+			game.test()				#another 10 test games
+			for i_episode in range(1, game.max_episodes+1):
+				game.reset()
+				game.run(i_episode)
+				game.train(i_episode)
+				if i_episode % game.test_interval == 0:
+					game.test()
+
+		else:
+			rospy.loginfo('Testing with Lfd')
+			game.test()
 	else:
 		if game.train_model:
 			rospy.loginfo('Training')
 			game.test() #testing with random agent
-			game.wait_for_keypress() # Pause in order to ask a question 
+			#game.wait_for_keypress() # Pause in order to ask a question 
 			for i_episode in range(1, game.max_episodes+1):
 				game.reset()
 				game.run(i_episode)
@@ -422,7 +430,18 @@ def game_loop(game):
 			rospy.loginfo('Testing')
 			game.test()
 		
-		
+def wait_for_keypress(self): #function to stop the game after 10 first test games and wait for key press
+    	stdscr = curses.initscr()
+	curses.noecho()
+	stdscr.nodelay(True)
+   	stdscr.refresh()
+	print("Press any key to continue...")
+    	while True:
+        	key = stdscr.getch()
+        	if key != -1:
+            		curses.endwin()
+            		return
+
 
 if __name__ == "__main__":
 
