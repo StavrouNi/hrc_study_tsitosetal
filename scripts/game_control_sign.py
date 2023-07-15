@@ -7,14 +7,6 @@ from human_robot_collaborative_learning.srv import *
 from human_robot_collaborative_learning.msg import Score
 from utils import *
 import curses
-
-
-from std_srvs.srv import Empty#
-from gazebo_msgs.srv import SetModelConfiguration#
-from controller_manager_msgs.srv import SwitchController#
-
-import time#
-
 import math
 import numpy as np
 import pandas as pd
@@ -31,6 +23,7 @@ class RL_Control:
 
 		self.transfer_method= rospy.get_param("/rl_control/Game/lfd_transfer", False)	# if true Lerning from demonstations TF will be used, different setup of the experiment
 		self.lfd_expert_gameplay = rospy.get_param("/rl_control/Game/lfd_expert_gameplay",False) #if true the expert is playing we give! to experts buffer and demonstrations buffer
+		self.lfd_transfer_gameplay = rospy.get_param("/rl_control/Game/lfd_transfer_gameplay",False) #if true the participant is playing lfd transfer, we initialize the dual buffer
 		self.train_model = rospy.get_param('rl_control/Game/train_model', False)
 		self.transfer_learning = rospy.get_param("rl_control/Game/load_model_transfer_learning", False)
 		if self.train_model:
@@ -46,7 +39,12 @@ class RL_Control:
 
 				
 			if self.transfer_learning:
-				if self.transfer_method: #here we will initialize the Demonstrations buffer to give to the participant
+				if self.transfer_method: #here we  initialize the Demonstrations buffer to give to the participant
+					self.agent = get_SAC_agent(observation_space=[4])
+					rospy.logwarn("User has not specified any model for training. Gonna initialize random agent")#initialization of new model of no existing model is set
+					#self.demo_data = rospy.get_param("rl_control/Game/load_demonstrations_data_dir")
+					#self.percentages = [1.0, 0.8, 0.6, 0.3, 0.1]
+					#self.dual_buffer = Dual_ReplayBuffer(buffer_max_size, game.agent.memory, percentages)
 					rospy.logwarn("initialization of LfD parameters")
 
 				else: #here PPR method is used so we initialize the expert agent
@@ -290,7 +288,7 @@ class RL_Control:
 				self.save_models = True
 			else:
 				if not self.load_model_for_training:
-					rospy.loginfo("Training from scratch")
+					rospy.loginfo("Training from scratch") #why this line pops at every action ??
 					rospy.loginfo("Training with random agent") if randomness_request < self.randomness_threshold else rospy.loginfo('Training with trained agent')
 					self.e_greedy(randomness_request)
 				else:
@@ -349,7 +347,7 @@ class RL_Control:
 		start_grad_updates = rospy.get_time()
 		rospy.loginfo('Performing {} updates'.format(update_cycles))
 		for _ in tqdm(range(update_cycles)):
-			self.agent.learn()
+			self.agent.learn(episode_number=0)
 			self.agent.soft_update_target()
 		end_grad_updates = rospy.get_time()
 		return end_grad_updates - start_grad_updates
@@ -364,7 +362,7 @@ class RL_Control:
 			self.run(test_i_episode)
 			
 		self.test_agent_flag = False
-
+    
 	def train(self, i_episode):
 		if self.train_model and i_episode >= self.start_training_on_episode:
 			if i_episode % self.agent.update_interval == 0:
@@ -384,6 +382,8 @@ class RL_Control:
 				train_msg.data = False
 				self.train_pub.publish(train_msg)
 
+
+
 	def compute_update_cycles(self):
 		if self.scheduling == 'uniform':
 			self.update_cycles = math.ceil(self.total_update_cycles / math.ceil(self.max_episodes / self.agent.update_interval))
@@ -391,56 +391,51 @@ class RL_Control:
 			self.update_cycles /= 2
 		else:
 			raise Exception("Choose a valid scheduling procedure")
+		
+	def initiale_offline_update(self):
+		start_training_time=rospy.get_time()
+		self.compute_update_cycles()  # Compute the number of updates to perform
+		if self.update_cycles > 0:
+			grad_updates_duration = self.grad_updates()  # Perform the updates
+			self.agent.save_models()  # Save the updated model
+		remaining_wait_time = self.rest_period - (rospy.get_time() - start_training_time)
+		start_remaining_time = rospy.get_time()
+		while rospy.get_time() - start_remaining_time < remaining_wait_time:
+			pass
+
 
 def game_loop(game):
-	if game.transfer_method:
-		rospy.logwarn("Running LFD experiment")
-		if game.train_model:
-			rospy.loginfo('Training with LfD')
-			game.test() #testing with random agent
-			#game.wait_for_keypress() # Pause in order to ask a question 
-			grad_updates_duration = self.grad_updates()
-            		self.agent.save_models()			#first offline
-			game.test()				#another 10 test games
-			for i_episode in range(1, game.max_episodes+1):
-				game.reset()
-				game.run(i_episode)
-				game.train(i_episode)
-				if i_episode % game.test_interval == 0:
-					game.test()
 
-		else:
-			rospy.loginfo('Testing with Lfd')
-			game.test()
-	else:
-		if game.train_model:
-			rospy.loginfo('Training')
-			game.test() #testing with random agent
-			#game.wait_for_keypress() # Pause in order to ask a question 
-			for i_episode in range(1, game.max_episodes+1):
-				game.reset()
-				game.run(i_episode)
-				game.train(i_episode)
-				if i_episode % game.test_interval == 0:
-					game.test()
-				#if i_episode % 1 == 0:################# FOR DEBUGGING OF SAVED DATAA
-               				#save_data(game, data_dir)  # Save the data after 10 episodes
+	if game.train_model:
+		rospy.loginfo('Training')
+		#game.test() #testing with random agent
+		game.initiale_offline_update()
+		for i_episode in range(1, game.max_episodes+1):
+			game.reset()
+			game.run(i_episode)
+			game.train(i_episode)
+			if i_episode % game.test_interval == 0:
+				game.test()
+		if  game.lfd_expert_gameplay: #if the expert plays we save all the experience of the gameplay to the expert buffer
+			game.agent.memory.save_buffer('/opt/ros/catkin_ws/src/hrc_study_tsitosetal/buffers')
+			#if i_episode % 1 == 0:################# FOR DEBUGGING OF SAVED DATAA
+              				#save_data(game, data_dir)  # Save the data after 10 episodes
                 			#plot_statistics(game, plot_dir)  # Plot or save the statistics after 10 episodes
-		else:
-			rospy.loginfo('Testing')
-			game.test()
+	else:
+		rospy.loginfo('Testing')
+		game.test()
 		
-def wait_for_keypress(self): #function to stop the game after 10 first test games and wait for key press
-    	stdscr = curses.initscr()
-	curses.noecho()
-	stdscr.nodelay(True)
-   	stdscr.refresh()
-	print("Press any key to continue...")
-    	while True:
-        	key = stdscr.getch()
-        	if key != -1:
-            		curses.endwin()
-            		return
+#def wait_for_keypress(self): #function to stop the game after 10 first test games and wait for key press
+    	#stdscr = curses.initscr()
+	#curses.noecho()
+	#stdscr.nodelay(True)
+   	#stdscr.refresh()
+	#print("Press any key to continue...")
+    #	while True:
+    #   	key = stdscr.getch()
+    #    	if key != -1:
+    #       		curses.endwin()
+    #        		return
 
 
 if __name__ == "__main__":

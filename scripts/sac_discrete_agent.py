@@ -1,7 +1,7 @@
 import rospy
 import torch
 import numpy as np
-from networks_discrete import update_params, Actor, Critic, ReplayBuffer
+from networks_discrete import update_params, Actor, Critic, ReplayBuffer, Dual_ReplayBuffer
 import torch.nn.functional as F
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -19,7 +19,6 @@ class DiscreteSACAgent:
         self.alpha = rospy.get_param('rl_control/SAC/alpha', 100)
         self.beta = rospy.get_param('rl_control/SAC/beta', 100)
         self.target_entropy = rospy.get_param('rl_control/SAC/target_entropy_ratio', 100)
-
         self.update_interval = update_interval
         self.buffer_max_size = buffer_max_size
         self.scale = reward_scale
@@ -33,6 +32,10 @@ class DiscreteSACAgent:
         self.critic = Critic(self.input_dims, self.n_actions, self.layer1_size, chkpt_dir=self.chkpt_dir).to(device)
         self.target_critic = Critic(self.input_dims, self.n_actions, self.layer1_size, chkpt_dir=self.chkpt_dir).to(
             device)
+        # The above 3 lines are for the LfD participants gameplay to initialize the dual buffer
+        self.demo_data = rospy.get_param("rl_control/Game/load_demonstrations_data_dir","opt/ros/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer.npy")
+        self.lfd_transfer_gameplay = rospy.get_param('rl_control/Game/lfd_transfer_gameplay', False)
+        self.percentages = [1.0, 0.8, 0.6, 0.3, 0.1]
 
         self.target_critic.load_state_dict(self.critic.state_dict())
         # self.soft_update_target()
@@ -52,12 +55,17 @@ class DiscreteSACAgent:
 
         self.log_alpha = torch.zeros(1, requires_grad=True, device=device)
         self.alpha_optim = torch.optim.Adam([self.log_alpha], lr=self.lr, eps=1e-4)
+        if self.lfd_transfer_gameplay:
+            self.memory= Dual_ReplayBuffer(self.buffer_max_size,self.demo_data,self.percentages)
+        else:
+            self.memory = ReplayBuffer(self.buffer_max_size)
 
-        self.memory = ReplayBuffer(self.buffer_max_size)
-
-    def learn(self, interaction=None):
+    def learn(self,episode_number, interaction=None):
         if interaction is None:
-            states, actions, rewards, states_, dones = self.memory.sample(self.batch_size)
+            if self.lfd_transfer_gameplay:
+                states, actions, rewards, states_, dones= self.memory.sample(self.batch_size,episode_number)
+            else:
+                states, actions, rewards, states_, dones = self.memory.sample(self.batch_size)
         else:
             states, actions, rewards, states_, dones = interaction
             states, actions, rewards, states_, dones = [np.asarray([states]), np.asarray([actions]),
@@ -179,6 +187,7 @@ class DiscreteSACAgent:
         inside_term = - alpha * (log_pi_s + self.target_entropy).detach()
         entropy_loss = (pi_s * inside_term).mean()
         return entropy_loss
+
 
     def calc_entropy_loss(self, entropies, weights):
         # Intuitively, we increse alpha when entropy is less than target

@@ -1,6 +1,6 @@
 import os
 
-import torch
+import torch  
 import torch.nn as nn
 from torch.distributions import Categorical
 import numpy as np
@@ -71,10 +71,23 @@ class ReplayBuffer:
         idxes = [random.randint(0, len(self.storage) - 1) for _ in range(batch_size)]
         return self._encode_sample(idxes)
         
-    #adding thdefs to load and save the 2 experts data 
-    # Save Buffer
+    # Save Buffer       #changed this function in order to save experts data in different files after game ends
     def save_buffer(self, path):
-        np.save(path, self.storage)
+        filename = "buffer_data.npy"
+        file_path = os.path.join(path, filename)
+        
+        # Check if the file already exists
+        if os.path.exists(file_path):
+            i = 1
+            while True:
+                new_filename = "buffer_data_{}.npy".format(i)
+                new_file_path = os.path.join(path, new_filename)
+                if not os.path.exists(new_file_path):
+                    filename = new_filename
+                    break
+                i += 1
+        
+        np.save(os.path.join(path, filename), self.storage)
     
     # Load Buffer
     def load_buffer(self, path):
@@ -85,11 +98,17 @@ class Dual_ReplayBuffer:
     """
     Convert to numpy
     """
-    def __init__(self, memory_size,replay_buffer,percentages):
+    def __init__(self, memory_size,demo_data_path,percentages):
+        #print(type(replay_buffer))
+        #print(type(replay_buffer[0]))
+
         self.storage = []
         self.memory_size = memory_size
         self.next_idx = 0
-        self.expert_storage = replay_buffer.storage
+        #self.expert_storage = replay_buffer.storage
+
+        self.expert_storage = np.load(demo_data_path, allow_pickle=True).tolist()
+
         self.percentages = percentages
 
     # add the samples
@@ -116,11 +135,16 @@ class Dual_ReplayBuffer:
             rewards.append(reward)
             obses_.append(np.array(obs_, copy=False))
             dones.append(done)
-            transition_infos.append(transition_info)
         
         for i in idx_exp:
+            #print(self.expert_storage)
+
             data = self.expert_storage[i]
-            obs, action, reward, obs_, done = data
+            #print("############",type(data))
+            #print(len(data), data)
+
+            obs, action, reward, obs_, done= data
+            
             obses.append(np.array(obs, copy=False))
             actions.append(np.array(action, copy=False))
             rewards.append(reward)
@@ -129,11 +153,12 @@ class Dual_ReplayBuffer:
             
 
         return np.array(obses), np.array(actions), np.array(rewards), np.array(obses_), np.array(dones)
-
+    
     # sample from the memory
-    def sample(self, batch_size, block_number):
-        idx_exp = [random.randint(0, len(self.expert_storage) - 1) for _ in range(int(batch_size*self.percentages[block_number]))]
-        idx = [random.randint(0, len(self.storage) - 1) for _ in range(int(batch_size*(1-self.percentages[block_number])))]
+    def sample(self, batch_size, episode_number):
+
+        idx_exp = [random.randint(0, len(self.expert_storage) - 1) for _ in range(int(batch_size*self.percentages[episode_number]))]
+        idx = [random.randint(0, len(self.storage) - 1) for _ in range(int(batch_size*(1-self.percentages[episode_number])))]
         return self._encode_sample(idx,idx_exp)
     # Save Buffer
     def save_buffer(self, path):
