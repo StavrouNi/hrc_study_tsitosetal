@@ -62,9 +62,9 @@ def get_save_dir(load_model_for_training=False):
 
 def save_data(game, data_dir):
 	with open(data_dir+'/data.csv', 'ab') as outputFile:
-		headers = [['Rewards'], ['Episodes Duration in Seconds'], ['Travelled Distance'], ['Episodes Duration in Timesteps']]
+		headers = [['expert'],['Rewards'], ['Episodes Duration in Seconds'], ['Travelled Distance'], ['Episodes Duration in Timesteps']]		
 		np.savetxt(outputFile, list(zip(*headers)), delimiter=',', fmt='%s')
-		data = [game.reward_history, game.episode_duration, game.travelled_distance, game.number_of_timesteps]
+		data = [len(game.reward_history) * [game.expert_action_flag],game.reward_history, game.episode_duration, game.travelled_distance, game.number_of_timesteps]		
 		np.savetxt(outputFile, list(zip(*data)), delimiter=',')
 
 	with open(data_dir+'/test_data.csv', 'ab') as outputFile:
