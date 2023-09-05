@@ -1,10 +1,6 @@
 Game:
-  participant_name: "CO"
   participant_name: "NIKOLAS"
   full_path: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/"
-  train_model: False # True if no training happens
-  load_model_training: True # True if loading model to continue training
-  load_model_training_dir: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/rl_models/expert" # Location of the model 
   #LfD arguments
   lfd_transfer: True #true if we using learning from Demonstrations transfer learning
   lfd_expert_gameplay: True #true if the expert is playing and collecting demonstration and expert data and place them to the buffers
@@ -16,7 +12,6 @@ Game:
   load_model_training_dir: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/rl_models/98K_every10_uniform_200ms_NIKOLAS_no_TL_13" # Location of the model 
   load_model_transfer_learning: False # True if loading model for transfer_learning 
   load_model_transfer_learning_dir: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/rl_models/expert" # Location of the model for transfer learning 
-  load_model_testing_dir: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/rl_models/expert" # Location of the model for testing
   load_model_testing_dir: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/rl_models/98K_every10_uniform_200ms_NIKOLAS_no_TL_13" # Location of the model for testing
   load_demonstrations_data_dir: "/opt/ros/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer/demo_data.npy" #Location of the expert experience for the participants buffer will be stored
   #load_demonstrations_data_dir: "/home/nick/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer"
