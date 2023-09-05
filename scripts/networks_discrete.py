@@ -137,26 +137,19 @@ class Dual_ReplayBuffer:
             dones.append(done)
         
         for i in idx_exp:
-            #print(self.expert_storage)
-
             data = self.expert_storage[i]
-            #print("############",type(data))
-            #print(len(data), data)
-
             obs, action, reward, obs_, done= data
-            
             obses.append(np.array(obs, copy=False))
             actions.append(np.array(action, copy=False))
             rewards.append(reward)
             obses_.append(np.array(obs_, copy=False))
             dones.append(done)
             
-
         return np.array(obses), np.array(actions), np.array(rewards), np.array(obses_), np.array(dones)
     
     # sample from the memory
     def sample(self, batch_size, episode_number):
-
+        print("Percentage for episode {}: {}".format(episode_number, self.percentages[episode_number]))
         idx_exp = [random.randint(0, len(self.expert_storage) - 1) for _ in range(int(batch_size*self.percentages[episode_number]))]
         idx = [random.randint(0, len(self.storage) - 1) for _ in range(int(batch_size*(1-self.percentages[episode_number])))]
         return self._encode_sample(idx,idx_exp)

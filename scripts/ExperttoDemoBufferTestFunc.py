@@ -22,19 +22,6 @@ def ExpertoDemo(filename, save_path):
 
     extracted_games = []
 
-    #for episode_idx, episode in enumerate(episodes):
-    #    column_3_values = episode[:, 2]
-    #    winning_games_indices = np.where((column_3_values == 10) & (episode[:, -1] == True))[0]
-    #    num_extracted_games = min(num_extracted_games_per_episode[episode_idx], len(winning_games_indices))
-    #    for game_idx in winning_games_indices[:num_extracted_games]:
-    #        game_start_idx = game_idx - 1
-    #        while game_start_idx >= 0 and not episode[game_start_idx, -1]:
-    #            game_start_idx -= 1
-    #        game_start_idx = max(0, game_start_idx)  # Reset to 0 if it becomes negative
-    #        extracted_games.append(episode[game_start_idx+1:game_idx + 1])
-
-    #    print("Number of extracted winning games episode:", episode_idx, num_extracted_games)
-
     for episode_idx, episode in enumerate(episodes): #with this updated method we collect the largest winning games of the 2,3,3,2 of each episode 
         column_3_values = episode[:, 2]
         winning_games_indices = np.where((column_3_values == 10) & (episode[:, -1] == True))[0]
@@ -72,7 +59,7 @@ def ExpertoDemo(filename, save_path):
     print(type(demo_games))
 
     return demo_games
-save_path='/home/nick/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer/demo_data.npy'
+#save_path='/home/nick/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer/demo_data.npy'
 
-filename = '/home/nick/catkin_ws/src/hrc_study_tsitosetal/buffers/expert_buffer/buffer_data_5.npy'
+#filename = '/home/nick/catkin_ws/src/hrc_study_tsitosetal/buffers/expert_buffer/buffer_data_5.npy'
 ExpertoDemo(filename, save_path)

@@ -20,8 +20,16 @@ def get_SAC_agent(observation_space, chkpt_dir=""):
 		action_duration = int(rospy.get_param('rl_control/Experiment/action_duration', 100)*1000)
 		training_scheduling = rospy.get_param('rl_control/Experiment/scheduling', 'uniform')
 		transfer_learning = rospy.get_param("rl_control/Game/load_model_transfer_learning", False)
-		save_chkpt_dir = "{}K_every{}_{}_{}ms_{}_no_TL".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant) if not transfer_learning else "{}K_every{}_{}_{}ms_{}".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant)
-		
+		transfer_method= rospy.get_param("rl_control/Game/lfd_transfer", False)
+		#save_chkpt_dir = "{}K_every{}_{}_{}ms_{}_no_TL".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant) if not transfer_learning else "{}K_every{}_{}_{}ms_{}".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant)
+		if not transfer_learning:
+			if transfer_method:
+				save_chkpt_dir = "{}K_every{}_{}_{}ms_{}_LfD_TL".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant)
+			else:
+				save_chkpt_dir = "{}K_every{}_{}_{}ms_{}_no_TL".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant)
+		else:
+			save_chkpt_dir = "{}K_every{}_{}_{}ms_{}_PPR_TL".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant)
+
 		save_chkpt_dir = os.path.join(rospy.get_param("rl_control/Game/full_path", "tmp"), 'rl_models/' + save_chkpt_dir)
 		i=1
 		while os.path.exists(save_chkpt_dir + '_' + str(i)):
@@ -40,8 +48,16 @@ def get_save_dir(load_model_for_training=False):
 		action_duration = int(rospy.get_param('rl_control/Experiment/action_duration', 100)*1000)
 		training_scheduling = rospy.get_param('rl_control/Experiment/scheduling', 'uniform')
 		transfer_learning = rospy.get_param("rl_control/Game/load_model_transfer_learning", False)
-		save_chkpt_dir = "{}K_every{}_{}_{}ms_{}_no_TL".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant) if not transfer_learning else "{}K_every{}_{}_{}ms_{}".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant)
-		
+		transfer_method= rospy.get_param("rl_control/Game/lfd_transfer", False)
+		#save_chkpt_dir = "{}K_every{}_{}_{}ms_{}_no_TL".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant) if not transfer_learning else "{}K_every{}_{}_{}ms_{}".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant)
+		if not transfer_learning:
+			if transfer_method:
+				save_chkpt_dir = "{}K_every{}_{}_{}ms_{}_LfD_TL".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant)
+			else:
+				save_chkpt_dir = "{}K_every{}_{}_{}ms_{}_no_TL".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant)
+		else:
+			save_chkpt_dir = "{}K_every{}_{}_{}ms_{}_PPR_TL".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant)
+
 		save_chkpt_dir = os.path.join(full_path, save_chkpt_dir)
 		i = 1
 		while os.path.exists(save_chkpt_dir + '_' + str(i)):

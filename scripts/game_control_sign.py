@@ -6,6 +6,7 @@ from cartesian_state_msgs.msg import PoseTwist
 from human_robot_collaborative_learning.srv import *
 from human_robot_collaborative_learning.msg import Score
 from utils import *
+#from ExperttoDemoBufferTestFunc import *
 import curses
 import math
 import numpy as np
@@ -23,7 +24,7 @@ class RL_Control:
 
 		self.transfer_method= rospy.get_param("/rl_control/Game/lfd_transfer", False)	# if true Lerning from demonstations TF will be used, different setup of the experiment
 		self.lfd_expert_gameplay = rospy.get_param("/rl_control/Game/lfd_expert_gameplay",False) #if true the expert is playing we give! to experts buffer and demonstrations buffer
-		self.lfd_transfer_gameplay = rospy.get_param("/rl_control/Game/lfd_transfer_gameplay",False) #if true the participant is playing lfd transfer, we initialize the dual buffer
+		self.lfd_participant_gameplay = rospy.get_param("/rl_control/Game/lfd_transfer_gameplay",False) #if true the participant is playing lfd transfer, we initialize the dual buffer
 		self.train_model = rospy.get_param('rl_control/Game/train_model', False)
 		self.transfer_learning = rospy.get_param("rl_control/Game/load_model_transfer_learning", False)
 		if self.train_model:
@@ -39,22 +40,17 @@ class RL_Control:
 
 				
 			if self.transfer_learning:
-				if self.transfer_method: #here we  initialize the Demonstrations buffer to give to the participant
-					self.agent = get_SAC_agent(observation_space=[4])
-					rospy.logwarn("User has not specified any model for training. Gonna initialize random agent")#initialization of new model of no existing model is set
-					#self.demo_data = rospy.get_param("rl_control/Game/load_demonstrations_data_dir")
-					#self.percentages = [1.0, 0.8, 0.6, 0.3, 0.1]
-					#self.dual_buffer = Dual_ReplayBuffer(buffer_max_size, game.agent.memory, percentages)
-					rospy.logwarn("initialization of LfD parameters")
-
-				else: #here PPR method is used so we initialize the expert agent
-					load_model_for_transfer_learning_dir = rospy.get_param("rl_control/Game/load_model_transfer_learning_dir", "dir")
-					self.expert_agent = get_SAC_agent(observation_space=[4], chkpt_dir=load_model_for_transfer_learning_dir)
-					self.expert_agent.load_models()
-					self.ppr_threshold = rospy.get_param("rl_control/Game/ppr_threshold", 0.7)
-					rospy.logwarn('Successfully loaded model at {} for transfer learning'.format(load_model_for_transfer_learning_dir))
+				load_model_for_transfer_learning_dir = rospy.get_param("rl_control/Game/load_model_transfer_learning_dir", "dir")
+				self.expert_agent = get_SAC_agent(observation_space=[4], chkpt_dir=load_model_for_transfer_learning_dir)
+				self.expert_agent.load_models()
+				self.ppr_threshold = rospy.get_param("rl_control/Game/ppr_threshold", 0.7)
+				rospy.logwarn('Successfully loaded model at {} for transfer learning'.format(load_model_for_transfer_learning_dir))
+				rospy.logwarn('Successfully loaded model at {} for transfer learning'.format(load_model_for_transfer_learning_dir))
 			else:
-				rospy.logwarn("User has not loaded any models for transfer learning")
+				if self.transfer_method:
+					rospy.logwarn("LfD transfer learning")
+				else:	
+					rospy.logwarn("User has not loaded any models for transfer learning")
 		else:
 			self.load_model_for_testing_dir = rospy.get_param("rl_control/Game/load_model_testing_dir", "dir")
 			rospy.logwarn('User is testing the model {}'.format(self.load_model_for_testing_dir))
@@ -75,6 +71,7 @@ class RL_Control:
 		self.win_audio = AudioSegment.from_mp3(os.path.join(audio_dir, win_audio_file))
 		self.lose_audio = AudioSegment.from_mp3(os.path.join(audio_dir, lose_audio_file))
 		self.test_count = 0
+		self.episode_number = 0  # Added this line to keep truck of the episode in Offline upddates with demonstrations buffer
 		
 		# Experiment parameters for training
 		self.max_episodes = rospy.get_param('rl_control/Experiment/max_episodes', 1000)
@@ -260,8 +257,7 @@ class RL_Control:
 
 	def compute_agent_action(self, randomness_request=None):
 		assert randomness_request != None, 'randomness_request is None'
-		self.expert_action_flag = False
-		if self.test_agent_flag: #we are in testing state 
+		if self.test_agent_flag:
 			if self.train_model:
 				rospy.loginfo("Testing with random agent") if randomness_request < self.randomness_threshold else rospy.loginfo("Testing with trained agent")
 				self.e_greedy(randomness_request)
@@ -272,38 +268,30 @@ class RL_Control:
 		else:
 			if self.transfer_learning: 
 				rospy.loginfo("Training with TL")
-				if self.transfer_method: #if Learning from Demonstrations is true it will always play with participant agent, not expert agent
-					print('e greedy')  
-					print('lfD_Method')
-					self.e_greedy(randomness_request)					
-				else:  #else it computes the ppr_threshold for the expert agent
-					self.ppr_request = np.random.randint(100)/100
-					if self.ppr_request < self.ppr_threshold:
-						self.expert_action_flag = True  # Expert action is taken
-						print('Expert action')
-						self.agent_action = self.expert_agent.actor.sample_act(self.observation)
-					else:
-						print('e greedy')
-						self.e_greedy(randomness_request)
+				self.ppr_request = np.random.randint(100)/100
+				if self.ppr_request < self.ppr_threshold:
+					print('Expert action')
+					self.agent_action = self.expert_agent.actor.sample_act(self.observation)
+				else:
+					print('e greedy')
+					self.e_greedy(randomness_request)
 				self.save_models = True
 			else:
 				if not self.load_model_for_training:
-					rospy.loginfo("Training from scratch") #why this line pops at every action ??
+					rospy.loginfo("Training from scratch")
 					rospy.loginfo("Training with random agent") if randomness_request < self.randomness_threshold else rospy.loginfo('Training with trained agent')
 					self.e_greedy(randomness_request)
 				else:
 					rospy.loginfo("Training existing model")
 					self.agent_action = self.agent.actor.sample_act(self.observation)
 					self.save_models = True
-					
-		# Append the expert action flag to state_info based on the test_agent_flag
-
-        	#self.test_state_info.append((expert_action_flag,))
-
- 
 		agent_action_msg = Float64()
 		agent_action_msg.data = self.agent_action
 		self.agent_action_pub.publish(agent_action_msg)
+					
+		# Append the expert action flag to state_info based on the test_agent_flag
+
+        #self.test_state_info.append((expert_action_flag,))
 
 	def compute_reward(self):
 		if (distance.euclidean([self.ur3_state.pose.position.x, self.ur3_state.pose.position.y], self.goal) <= self.goal_dis and 
@@ -347,10 +335,24 @@ class RL_Control:
 		start_grad_updates = rospy.get_time()
 		rospy.loginfo('Performing {} updates'.format(update_cycles))
 		for _ in tqdm(range(update_cycles)):
-			self.agent.learn(episode_number=0)
+			self.agent.learn(self.episode_number)
 			self.agent.soft_update_target()
 		end_grad_updates = rospy.get_time()
+		self.episode_number += 1
 		return end_grad_updates - start_grad_updates
+	
+
+	def initiale_offline_update(self):
+		start_training_time=rospy.get_time()
+		self.compute_update_cycles()  # Compute the number of updates to perform
+		if self.update_cycles > 0:
+			grad_updates_duration = self.grad_updates()  # Perform the updates
+			self.agent.save_models()  # Save the updated model
+		remaining_wait_time = self.rest_period - (rospy.get_time() - start_training_time)
+		start_remaining_time = rospy.get_time()
+		while rospy.get_time() - start_remaining_time < remaining_wait_time:
+			pass
+
 
 	def test(self):
 		self.test_agent_flag = True
@@ -382,8 +384,6 @@ class RL_Control:
 				train_msg.data = False
 				self.train_pub.publish(train_msg)
 
-
-
 	def compute_update_cycles(self):
 		if self.scheduling == 'uniform':
 			self.update_cycles = math.ceil(self.total_update_cycles / math.ceil(self.max_episodes / self.agent.update_interval))
@@ -392,35 +392,24 @@ class RL_Control:
 		else:
 			raise Exception("Choose a valid scheduling procedure")
 		
-	def initiale_offline_update(self):
-		start_training_time=rospy.get_time()
-		self.compute_update_cycles()  # Compute the number of updates to perform
-		if self.update_cycles > 0:
-			grad_updates_duration = self.grad_updates()  # Perform the updates
-			self.agent.save_models()  # Save the updated model
-		remaining_wait_time = self.rest_period - (rospy.get_time() - start_training_time)
-		start_remaining_time = rospy.get_time()
-		while rospy.get_time() - start_remaining_time < remaining_wait_time:
-			pass
-
 
 def game_loop(game):
 
 	if game.train_model:
 		rospy.loginfo('Training')
 		#game.test() #testing with random agent
-		game.initiale_offline_update()
-		for i_episode in range(1, game.max_episodes+1):
+		#if game.lfd_participant_gameplay: #if the participant is playing with LfD tranfer we start with an offline G/U after baseline
+			#game.initiale_offline_update()
+		for i_episode in range(1, game.max_episodes+1):#from the config file the trainind episodes must be set correctly, 40 for lfd participant
 			game.reset()
 			game.run(i_episode)
 			game.train(i_episode)
 			if i_episode % game.test_interval == 0:
 				game.test()
-		if  game.lfd_expert_gameplay: #if the expert plays we save all the experience of the gameplay to the expert buffer
-			game.agent.memory.save_buffer('/opt/ros/catkin_ws/src/hrc_study_tsitosetal/buffers')
-			#if i_episode % 1 == 0:################# FOR DEBUGGING OF SAVED DATAA
-              				#save_data(game, data_dir)  # Save the data after 10 episodes
-                			#plot_statistics(game, plot_dir)  # Plot or save the statistics after 10 episodes
+		if  game.lfd_expert_gameplay: #if the expert plays we save all the experience of the gameplay to the expert buffer and then makes the demo
+			game.agent.memory.save_buffer('/opt/ros/catkin_ws/src/hrc_study_tsitosetal/buffers/expert_buffer')
+			#ExpertoDemo('/opt/ros/catkin_ws/src/hrc_study_tsitosetal/buffers/expert_buffer','/opt/ros/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer')#takes the expert dbuffer and turns it to a demo
+
 	else:
 		rospy.loginfo('Testing')
 		game.test()
