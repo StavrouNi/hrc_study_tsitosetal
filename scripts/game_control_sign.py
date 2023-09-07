@@ -21,7 +21,7 @@ class RL_Control:
 		
 		self.transfer_method= rospy.get_param("/rl_control/Game/lfd_transfer", False)	# if true Lerning from demonstations TF will be used, different setup of the experiment
 		self.lfd_expert_gameplay = rospy.get_param("/rl_control/Game/lfd_expert_gameplay",False) #if true the expert is playing we give! to experts buffer and demonstrations buffer
-		self.lfd_transfer_gameplay = rospy.get_param("/rl_control/Game/lfd_transfer_gameplay",False) #if true the participant is playing lfd transfer, we initialize the dual buffer
+		self.lfd_participant_gameplay = rospy.get_param("/rl_control/Game/lfd_participant_gameplay",False) #if true the participant is playing lfd transfer, we initialize the dual buffer
 		self.train_model = rospy.get_param('rl_control/Game/train_model', False)
 		self.transfer_learning = rospy.get_param("rl_control/Game/load_model_transfer_learning", False)
 		if self.train_model:
@@ -73,6 +73,7 @@ class RL_Control:
 		self.win_audio = AudioSegment.from_mp3(os.path.join(audio_dir, win_audio_file))
 		self.lose_audio = AudioSegment.from_mp3(os.path.join(audio_dir, lose_audio_file))
 		self.test_count = 0
+		self.episode_number=0
 		
 		# Experiment parameters for training
 		self.max_episodes = rospy.get_param('rl_control/Experiment/max_episodes', 1000)
@@ -341,10 +342,11 @@ class RL_Control:
 		start_grad_updates = rospy.get_time()
 		rospy.loginfo('Performing {} updates'.format(update_cycles))
 		for _ in tqdm(range(update_cycles)):
-			self.agent.learn()
-			#self.agent.learn(episode_number=0) WHY I GAVE EPISODE NUMBER=0????
+			#self.agent.learn()
+			self.agent.learn(self.episode_number) #WHY I GAVE EPISODE NUMBER????
 			self.agent.soft_update_target()
 		end_grad_updates = rospy.get_time()
+		self.episode_number += 1
 		return end_grad_updates - start_grad_updates
 
 	def test(self):
@@ -396,8 +398,9 @@ class RL_Control:
 def game_loop(game):
 	if game.train_model:
 		rospy.loginfo('Training')
-		game.test() # test with random agent initial games
-		game.initiale_offline_update() # the first offline for LfD
+		game.test() # test with random agent initial games first 10 games
+		if game.lfd_participant_gameplay:
+			game.initiale_offline_update() # the first offline for LfD if the participant is playing
 		for i_episode in range(1, game.max_episodes+1):
 			game.reset()
 			game.run(i_episode)
@@ -405,7 +408,7 @@ def game_loop(game):
 			if i_episode % game.test_interval == 0:
 				game.test()
 		if  game.lfd_expert_gameplay: #if the expert plays we save all the experience of the gameplay to the expert buffer
-			game.agent.memory.save_buffer('/opt/ros/catkin_ws/src/hrc_study_tsitosetal/buffers')
+			game.agent.memory.save_buffer('/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers')
 			#if i_episode % 1 == 0:################# FOR DEBUGGING OF SAVED DATAA
               				#save_data(game, data_dir)  # Save the data after 10 episodes
                 			#plot_statistics(game, plot_dir)  # Plot or save the statistics after 10 episodes
