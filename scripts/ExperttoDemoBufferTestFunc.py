@@ -73,7 +73,7 @@ def ExpertoDemo(filename, save_path):
     print(type(demo_games))
 
     return demo_games
-save_path='/home/nick/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer/demo_data.npy'
+save_path='/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer/demo_data.npy'
 
-filename = '/home/nick/catkin_ws/src/hrc_study_tsitosetal/buffers/expert_buffer/buffer_data_5.npy'
+filename = '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/expert_buffer/buffer_data_5.npy'
 ExpertoDemo(filename, save_path)

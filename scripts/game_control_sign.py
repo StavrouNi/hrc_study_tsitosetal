@@ -278,7 +278,7 @@ class RL_Control:
 					self.ppr_request = np.random.randint(100)/100
 					if self.ppr_request < self.ppr_threshold:
 						self.expert_action_flag = True  # Expert action is taken
-						print('Expert action')
+						print('Expert action') # if it returns expert action in ppr tl smthing is not ok
 						self.agent_action = self.expert_agent.actor.sample_act(self.observation)
 					else:
 						print('e greedy')
@@ -398,7 +398,7 @@ class RL_Control:
 def game_loop(game):
 	if game.train_model:
 		rospy.loginfo('Training')
-		game.test() # test with random agent initial games first 10 games
+		#game.test() # test with random agent initial games first 10 games
 		if game.lfd_participant_gameplay:
 			game.initiale_offline_update() # the first offline for LfD if the participant is playing
 		for i_episode in range(1, game.max_episodes+1):
@@ -408,7 +408,7 @@ def game_loop(game):
 			if i_episode % game.test_interval == 0:
 				game.test()
 		if  game.lfd_expert_gameplay: #if the expert plays we save all the experience of the gameplay to the expert buffer
-			game.agent.memory.save_buffer('/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers')
+			game.agent.memory.save_buffer('/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/expert_buffer')
 			#if i_episode % 1 == 0:################# FOR DEBUGGING OF SAVED DATAA
               				#save_data(game, data_dir)  # Save the data after 10 episodes
                 			#plot_statistics(game, plot_dir)  # Plot or save the statistics after 10 episodes
