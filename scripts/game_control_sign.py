@@ -19,7 +19,7 @@ import threading
 class RL_Control:
 	def __init__(self):
 		
-		self.transfer_method= rospy.get_param("/rl_control/Game/lfd_transfer", False)	# if true Lerning from demonstations TF will be used, different setup of the experiment
+		#self.transfer_method= rospy.get_param("/rl_control/Game/lfd_transfer", False)	# if true Lerning from demonstations TF will be used, different setup of the experiment
 		self.lfd_expert_gameplay = rospy.get_param("/rl_control/Game/lfd_expert_gameplay",False) #if true the expert is playing we give! to experts buffer and demonstrations buffer
 		self.lfd_participant_gameplay = rospy.get_param("/rl_control/Game/lfd_participant_gameplay",False) #if true the participant is playing lfd transfer, we initialize the dual buffer
 		self.train_model = rospy.get_param('rl_control/Game/train_model', False)
@@ -36,20 +36,11 @@ class RL_Control:
 				rospy.logwarn("User has not specified any model for training. Gonna initialize random agent")
 				
 			if self.transfer_learning:
-				if self.transfer_method: #here we  initialize the Demonstrations buffer to give to the participant
-					self.agent = get_SAC_agent(observation_space=[4])
-					rospy.logwarn("User has not specified any model for training. Gonna initialize random agent")#initialization of new model of no existing model is set
-					#self.demo_data = rospy.get_param("rl_control/Game/load_demonstrations_data_dir")
-					#self.percentages = [1.0, 0.8, 0.6, 0.3, 0.1]
-					#self.dual_buffer = Dual_ReplayBuffer(buffer_max_size, game.agent.memory, percentages)
-					rospy.logwarn("initialization of LfD parameters")
-
-				else: #here PPR method is used so we initialize the expert agent
-					load_model_for_transfer_learning_dir = rospy.get_param("rl_control/Game/load_model_transfer_learning_dir", "dir")
-					self.expert_agent = get_SAC_agent(observation_space=[4], chkpt_dir=load_model_for_transfer_learning_dir)
-					self.expert_agent.load_models()
-					self.ppr_threshold = rospy.get_param("rl_control/Game/ppr_threshold", 0.7)
-					rospy.logwarn('Successfully loaded model at {} for transfer learning'.format(load_model_for_transfer_learning_dir))
+				load_model_for_transfer_learning_dir = rospy.get_param("rl_control/Game/load_model_transfer_learning_dir", "dir")
+				self.expert_agent = get_SAC_agent(observation_space=[4], chkpt_dir=load_model_for_transfer_learning_dir)
+				self.expert_agent.load_models()
+				self.ppr_threshold = rospy.get_param("rl_control/Game/ppr_threshold", 0.7)
+				rospy.logwarn('Successfully loaded model at {} for transfer learning'.format(load_model_for_transfer_learning_dir))
 				
 			else:
 				rospy.logwarn("User has not loaded any models for transfer learning")
@@ -285,7 +276,7 @@ class RL_Control:
 						self.e_greedy(randomness_request)
 				self.save_models = True
 			else:
-				if not self.load_model_for_training:
+				if not self.load_model_for_training: #if LfD this loops plays, like a no transfer learning, so might change the previous for
 					rospy.loginfo("Training from scratch")
 					rospy.loginfo("Training with random agent") if randomness_request < self.randomness_threshold else rospy.loginfo('Training with trained agent')
 					self.e_greedy(randomness_request)
@@ -398,7 +389,7 @@ class RL_Control:
 def game_loop(game):
 	if game.train_model:
 		rospy.loginfo('Training')
-		#game.test() # test with random agent initial games first 10 games
+		game.test() # test with random agent initial games first 10 games
 		if game.lfd_participant_gameplay:
 			game.initiale_offline_update() # the first offline for LfD if the participant is playing
 		for i_episode in range(1, game.max_episodes+1):
@@ -409,9 +400,7 @@ def game_loop(game):
 				game.test()
 		if  game.lfd_expert_gameplay: #if the expert plays we save all the experience of the gameplay to the expert buffer
 			game.agent.memory.save_buffer('/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/expert_buffer')
-			#if i_episode % 1 == 0:################# FOR DEBUGGING OF SAVED DATAA
-              				#save_data(game, data_dir)  # Save the data after 10 episodes
-                			#plot_statistics(game, plot_dir)  # Plot or save the statistics after 10 episodes
+
 	else:
 		rospy.loginfo('Testing')
 		game.test()

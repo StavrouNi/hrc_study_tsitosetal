@@ -65,7 +65,7 @@ class DiscreteSACAgent:
     def learn(self,episode_number, interaction=None):
         if interaction is None:
             if self.lfd_participant_gameplay:
-                states, actions, rewards, states_, dones= self.memory.sample(self.batch_size,episode_number)
+                states, actions, rewards, states_, dones= self.memory.sample(self.batch_size,episode_number) # TO_DO add a print line here to make sure % are correct
             else:
                 states, actions, rewards, states_, dones = self.memory.sample(self.batch_size)
         else:

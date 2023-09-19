@@ -13,7 +13,7 @@ def ExpertoDemo(filename, save_path):
     splits = np.array_split(indices, len(indices) // 10)
     episodes = []
 
-    num_extracted_games_per_episode = [0, 2, 3, 3, 2]
+    num_extracted_games_per_episode = [0, 2, 0, 4, 4] # define the number of winning game per block
 
     for split in splits:
         start_idx = split[0] - 1 if split[0] != 0 else 0
@@ -75,5 +75,5 @@ def ExpertoDemo(filename, save_path):
     return demo_games
 save_path='/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer/demo_data.npy'
 
-filename = '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/expert_buffer/buffer_data_5.npy'
+filename = '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/expert_buffer/buffer_data_1.npy'
 ExpertoDemo(filename, save_path)
