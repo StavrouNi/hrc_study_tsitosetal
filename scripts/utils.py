@@ -21,9 +21,11 @@ def get_SAC_agent(observation_space, chkpt_dir=""):
 		training_scheduling = rospy.get_param('rl_control/Experiment/scheduling', 'uniform')
 		transfer_learning = rospy.get_param("rl_control/Game/load_model_transfer_learning", False)
 		transfer_method= rospy.get_param("rl_control/Game/lfd_transfer", False)
+		lfd_participant_gameplay=rospy.get_param("rl_control/Game/lfd_participant_gameplay", False)
+		lfd_expert_gameplay=rospy.get_param("rl_control/Game/lfd_expert_gameplay", False)
 		#save_chkpt_dir = "{}K_every{}_{}_{}ms_{}_no_TL".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant) if not transfer_learning else "{}K_every{}_{}_{}ms_{}".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant)
 		if not transfer_learning:
-			if transfer_method:
+			if lfd_participant_gameplay or lfd_expert_gameplay:
 				save_chkpt_dir = "{}K_every{}_{}_{}ms_{}_LfD_TL".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant)
 			else:
 				save_chkpt_dir = "{}K_every{}_{}_{}ms_{}_no_TL".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant)
@@ -49,9 +51,12 @@ def get_save_dir(load_model_for_training=False):
 		training_scheduling = rospy.get_param('rl_control/Experiment/scheduling', 'uniform')
 		transfer_learning = rospy.get_param("rl_control/Game/load_model_transfer_learning", False)
 		transfer_method= rospy.get_param("rl_control/Game/lfd_transfer", False)
+		lfd_participant_gameplay=rospy.get_param("rl_control/Game/lfd_participant_gameplay", False)
+		lfd_expert_gameplay=rospy.get_param("rl_control/Game/lfd_expert_gameplay", False)
+
 		#save_chkpt_dir = "{}K_every{}_{}_{}ms_{}_no_TL".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant) if not transfer_learning else "{}K_every{}_{}_{}ms_{}".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant)
 		if not transfer_learning:
-			if transfer_method:
+			if lfd_participant_gameplay or lfd_expert_gameplay  :
 				save_chkpt_dir = "{}K_every{}_{}_{}ms_{}_LfD_TL".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant)
 			else:
 				save_chkpt_dir = "{}K_every{}_{}_{}ms_{}_no_TL".format(int(total_number_updates/1000), update_interval, training_scheduling, action_duration, participant)

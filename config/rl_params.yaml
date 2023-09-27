@@ -1,10 +1,10 @@
 Game:
-  participant_name: "NICKEXPERT"
+  participant_name: "NICKParticipant"
   full_path: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/"
   #LfD arguments
   lfd_transfer: False #true if we using learning from Demonstrations transfer learning
-  lfd_expert_gameplay: False #true if the expert is playing and collecting demonstration and expert data and place them to the buffers
-  lfd_participant_gameplay: True #true if the participant is playing with transfer LfD
+  lfd_expert_gameplay: True  #true if the expert is playing and collecting demonstration and expert data and place them to the buffers
+  lfd_participant_gameplay: False #true if the participant is playing with transfer LfD
 
   #games_to_capture: #The games that the Demonstrations buffer wil keep from the gameplay with the expert
   train_model: True # True if no training happens
@@ -13,11 +13,11 @@ Game:
   load_model_transfer_learning: False # True if loading model for transfer_learning 
   load_model_transfer_learning_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/rl_models/expert" # Location of the model for transfer learning 
   load_model_testing_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/rl_models/98K_every10_uniform_200ms_NIKOLAS_no_TL_13" # Location of the model for testing
-  load_demonstrations_data_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer/demo_data.npy" #Location of the expert experience for the participants buffer will be stored
+  load_demonstrations_data_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer/demo_data_random.npy" #Location of the expert experience for the participants buffer will be stored
   #load_demonstrations_data_dir: "/home/nick/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer"
   save: True # Save models and logs
   goal: [-0.264, 0.242] # goal position
-  goal_distance: 0.02 #0.01 maximum distance from goal in order to win
+  goal_distance: 0.01 #0.01 maximum distance from goal in order to win
   goal_velocity: 0.05 #0.05 maximum speed in order to win
   win_audio: "street-fighter-ii-you-win-perfect.mp3" # audio for win
   lose_audio: "gaming-sound-effect-hd.mp3" # audio for lose
@@ -41,7 +41,7 @@ SAC:
 # The game in splitted in training batches. Each batch consists of `test:max_episodes` testing episodes and `learn_every_n_episodes` training episodes.  
 # After each batch is completed, the model is trained. This procedure is repeated until `max_episodes` training episodes have been completed. 
 Experiment:
-  max_episodes: 40  # Total training episodes per game #70 PPR 50 LfD expert #40 LFD participant
+  max_episodes: 50  # Total training episodes per game #70 PPR 50 LfD 
   max_duration: 30 #30 Max duration of an episode (in seconds). An episode ends if the ball hits the target or if we reach the time limit
   test_interval: 10 # Test the current model after `test_interval` episodes
   action_duration: 0.2 # Time duration between consecutive RL agent actions

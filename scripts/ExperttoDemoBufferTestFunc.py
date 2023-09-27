@@ -13,7 +13,7 @@ def ExpertoDemo(filename, save_path):
     splits = np.array_split(indices, len(indices) // 10)
     episodes = []
 
-    num_extracted_games_per_episode = [0, 2, 0, 4, 4] # define the number of winning game per block
+    num_extracted_games_per_episode = [0, 2, 3, 3, 2] # define the number of winning game per block
 
     for split in splits:
         start_idx = split[0] - 1 if split[0] != 0 else 0
@@ -49,10 +49,15 @@ def ExpertoDemo(filename, save_path):
             game_start_idx = max(0, game_start_idx)  # Reset to 0 if it becomes negative
             winning_games.append(episode[game_start_idx+1:game_idx + 1])  # Exclude the last line (when looking backwards)
 
-        # Sort winning games by length in descending order and extract the largest ones
-        winning_games = sorted(winning_games, key=len, reverse=True)
+        # Shuffle the winning games and extract the specified number of games # ##FOR RANDOM
+        np.random.shuffle(winning_games)
         num_extracted_games = min(num_extracted_games_per_episode[episode_idx], len(winning_games))
         extracted_games.extend(winning_games[:num_extracted_games])
+
+        # Sort winning games by length in descending order and extract the largest ones##FOR LARGEST GAMES
+        #winning_games = sorted(winning_games, key=len, reverse=True)
+        #num_extracted_games = min(num_extracted_games_per_episode[episode_idx], len(winning_games))
+        #extracted_games.extend(winning_games[:num_extracted_games])
 
     for game in extracted_games:
         print("Game shape:", game.shape)
@@ -73,7 +78,7 @@ def ExpertoDemo(filename, save_path):
     print(type(demo_games))
 
     return demo_games
-save_path='/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer/demo_data.npy'
+save_path='/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer/demo_data_random.npy'
 
-filename = '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/expert_buffer/buffer_data_1.npy'
+filename = '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/expert_buffer/buffer_data.npy'
 ExpertoDemo(filename, save_path)

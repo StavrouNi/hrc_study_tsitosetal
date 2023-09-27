@@ -375,21 +375,44 @@ class RL_Control:
 			self.update_cycles /= 2
 		else:
 			raise Exception("Choose a valid scheduling procedure")
+	
 	def initiale_offline_update(self):
-		start_training_time=rospy.get_time()
+		train_msg = Bool()
+		train_msg.data = True
+		self.train_pub.publish(train_msg)
+
+    	# Existing offline update logic
+		start_training_time = rospy.get_time()
 		self.compute_update_cycles()  # Compute the number of updates to perform
 		if self.update_cycles > 0:
 			grad_updates_duration = self.grad_updates()  # Perform the updates
 			self.agent.save_models()  # Save the updated model
+    # Waiting period after updates
 		remaining_wait_time = self.rest_period - (rospy.get_time() - start_training_time)
 		start_remaining_time = rospy.get_time()
 		while rospy.get_time() - start_remaining_time < remaining_wait_time:
 			pass
+    # Signal the end of training (or resuming the robot's operations)
+		train_msg = Bool()
+		train_msg.data = False
+		self.train_pub.publish(train_msg)
+
+	#def initiale_offline_update(self):
+		#start_training_time=rospy.get_time()
+		#self.compute_update_cycles()  # Compute the number of updates to perform
+		#if self.update_cycles > 0:
+		#	grad_updates_duration = self.grad_updates()  # Perform the updates
+		#	self.agent.save_models()  # Save the updated model
+	#	remaining_wait_time = self.rest_period - (rospy.get_time() - start_training_time)
+		#start_remaining_time = rospy.get_time()
+		#while rospy.get_time() - start_remaining_time < remaining_wait_time:
+		#	pass
 
 def game_loop(game):
 	if game.train_model:
 		rospy.loginfo('Training')
 		game.test() # test with random agent initial games first 10 games
+
 		if game.lfd_participant_gameplay:
 			game.initiale_offline_update() # the first offline for LfD if the participant is playing
 		for i_episode in range(1, game.max_episodes+1):
