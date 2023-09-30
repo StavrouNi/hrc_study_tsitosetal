@@ -86,6 +86,7 @@ class RL_Control:
 		self.human_action = None
 		self.rest_period = rospy.get_param("rl_control/Game/rest_period", 120)
 		self.human_actions = []
+		self.random_agent_flag = []
 		self.agent_actions = []
 		self.ee_pos_x_prev = []
 		self.ee_pos_y_prev = []
@@ -98,7 +99,8 @@ class RL_Control:
 		self.cmd_acc_x = []
 		self.cmd_acc_y = []
 		self.expert_action_flag = False
-
+		self.dummy=1
+		
 		# Experiment parameters for testing
 		self.test_max_timesteps = int(rospy.get_param('rl_control/Experiment/test/max_duration', 200)/self.action_duration)
 		self.test_max_episodes = rospy.get_param('rl_control/Experiment/test/max_episodes', 1000)
@@ -127,6 +129,7 @@ class RL_Control:
 		self.timeout = False
 		self.episode_reward = 0
 		self.human_actions = []
+		self.random_agent_flag = []
 		self.agent_actions = []
 		self.ee_pos_x_prev = []
 		self.ee_pos_y_prev = []
@@ -214,7 +217,7 @@ class RL_Control:
 				self.end_time = rospy.get_time()
 				break
 		
-		new_state_info = list(zip(self.human_actions, self.agent_actions, self.ee_pos_x_prev, self.ee_pos_y_prev, self.ee_vel_x_prev, self.ee_vel_y_prev, self.ee_pos_x_next, self.ee_pos_y_next, self.ee_vel_x_next, self.ee_vel_y_next, self.cmd_acc_x, self.cmd_acc_y))
+		new_state_info = list(zip(self.random_agent_flag,self.human_actions, self.agent_actions, self.ee_pos_x_prev, self.ee_pos_y_prev, self.ee_vel_x_prev, self.ee_vel_y_prev, self.ee_pos_x_next, self.ee_pos_y_next, self.ee_vel_x_next, self.ee_vel_y_next, self.cmd_acc_x, self.cmd_acc_y))
 		
 		if self.test_agent_flag:
 			self.test_reward_history.append(self.episode_reward)
@@ -234,11 +237,23 @@ class RL_Control:
 			self.state_info.append((0,)*len(self.state_info[0]))
 			if self.best_episode_reward < self.episode_reward:
 				self.best_episode_reward = self.episode_reward
-
+		self.dummy+=1
 	def e_greedy(self, randomness_request):
 		if randomness_request < self.randomness_threshold:
-			# Pure exploration
-			self.agent_action = np.random.randint(self.agent.n_actions)
+			print("FIRST 20 GAMES")
+			if self.dummy < 10: 
+				#Pure exploration
+				self.agent_action = np.random.randint(self.agent.n_actions)
+				print("FIRST 10 TEST")
+			else:
+				print("FIRST 10 TRAIN")
+				self.random = np.random.randint(100)/100
+				if self.random < 0.5: #exploration
+					print("FIRST 10 TRAIN RANDIM")
+					self.agent_action = np.random.randint(self.agent.n_actions)
+					self.random_agent_flag.append(1)
+				else:#exploitation
+					self.agent_action = self.agent.actor.sample_act(self.observation)
 		else:
 			# Explore with actions_prob
 			self.agent_action = self.agent.actor.sample_act(self.observation)

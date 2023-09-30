@@ -181,9 +181,9 @@ class Actor(nn.Module):
         self.name = name
         self.actor_mlp = nn.Sequential(
             nn.Linear(state_dim, n_hidden_units),
-            nn.ReLU(),
+            nn.Tanh(),
             nn.Linear(n_hidden_units, n_hidden_units),
-            nn.ReLU(),
+            nn.Tanh(),
             nn.Linear(n_hidden_units, action_dim)
         ).apply(init_weights)
 
@@ -251,9 +251,9 @@ class DuelQNet(nn.Module):
 
         self.shared_mlp = nn.Sequential(
             nn.Linear(state_dim, n_hidden_units),
-            nn.ReLU(),
+            nn.Tanh(),
             nn.Linear(n_hidden_units, n_hidden_units),
-            nn.ReLU()
+            nn.Tanh()
         ).apply(init_weights)
 
         # self.q_head = nn.Linear(n_hidden_units, action_dim)
