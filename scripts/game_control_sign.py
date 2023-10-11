@@ -240,20 +240,8 @@ class RL_Control:
 		self.dummy+=1
 	def e_greedy(self, randomness_request):
 		if randomness_request < self.randomness_threshold:
-			print("FIRST 20 GAMES")
-			if self.dummy < 10: 
-				#Pure exploration
-				self.agent_action = np.random.randint(self.agent.n_actions)
-				print("FIRST 10 TEST")
-			else:
-				print("FIRST 10 TRAIN")
-				self.random = np.random.randint(100)/100
-				if self.random < 0.5: #exploration
-					print("FIRST 10 TRAIN RANDIM")
-					self.agent_action = np.random.randint(self.agent.n_actions)
-					self.random_agent_flag.append(1)
-				else:#exploitation
-					self.agent_action = self.agent.actor.sample_act(self.observation)
+			# Pure exploration
+			self.agent_action = np.random.randint(self.agent.n_actions)
 		else:
 			# Explore with actions_prob
 			self.agent_action = self.agent.actor.sample_act(self.observation)
@@ -363,6 +351,8 @@ class RL_Control:
 			self.reset()
 			self.run(test_i_episode)
 		self.test_agent_flag = False
+		self.agent.save_models()
+
 
 	def train(self, i_episode):
 		if self.train_model and i_episode >= self.start_training_on_episode:
@@ -382,6 +372,7 @@ class RL_Control:
 				train_msg = Bool()
 				train_msg.data = False
 				self.train_pub.publish(train_msg)
+		#self.agent.save_models()
 
 	def compute_update_cycles(self):
 		if self.scheduling == 'uniform':
@@ -411,17 +402,6 @@ class RL_Control:
 		train_msg = Bool()
 		train_msg.data = False
 		self.train_pub.publish(train_msg)
-
-	#def initiale_offline_update(self):
-		#start_training_time=rospy.get_time()
-		#self.compute_update_cycles()  # Compute the number of updates to perform
-		#if self.update_cycles > 0:
-		#	grad_updates_duration = self.grad_updates()  # Perform the updates
-		#	self.agent.save_models()  # Save the updated model
-	#	remaining_wait_time = self.rest_period - (rospy.get_time() - start_training_time)
-		#start_remaining_time = rospy.get_time()
-		#while rospy.get_time() - start_remaining_time < remaining_wait_time:
-		#	pass
 
 def game_loop(game):
 	if game.train_model:
