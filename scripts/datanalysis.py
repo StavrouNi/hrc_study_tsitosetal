@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
+'''
 # Load data for multiple participants # for the first 3 plots WINS REWARDS TRAVELLED DISTANCE we can have more than 1 filepath 
 filepaths = [
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/98K_every10_uniform_200ms_ChristosPilot_LfD_TL_1/data/test_data.csv',
@@ -13,7 +13,72 @@ steps_filepaths = [
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/98K_every10_uniform_200ms_ChristosPilot_LfD_TL_1/data/rl_test_data.csv',
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/98K_every10_uniform_200ms_NICKEXPERT_LfD_TL_1/data/rl_test_data.csv'
 ]
+'''
+#######################################THIS PART IS ONLY FOR THE INITIALIZED AGENT#####################################
+initialization_filepaths = [
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_1/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_2/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_3/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_4/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_5/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_6/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_7/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_8/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_9/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_10/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_11/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_12/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_13/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_14/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_15/data/test_data.csv',
 
+]
+
+# 2. Process the data for each agent
+agent_means = []
+for filepath in initialization_filepaths:
+    data = np.loadtxt(filepath, delimiter=',', skiprows=1)
+    # Add 150 to the values in the first column
+    scores = data[:, 0] + 150
+    #print(scores)
+    # Compute mean for every 10 games
+    mean_scores = [np.mean(scores[i:i+10]) for i in range(0, len(scores), 10)]
+    agent_means.append(np.mean(mean_scores))
+
+# 3. Plot the results
+agent_numbers = np.arange(1, 16)  # Since there are 15 agents
+plt.bar(agent_numbers, agent_means)
+plt.xlabel('Agent Number')
+plt.ylabel('Mean Score')
+plt.title('Mean Score for 15 Initialization Agents')
+plt.xticks(agent_numbers)  # Set x-ticks to be agent numbers
+plt.show()
+
+# ... [Your Previous Code] ...
+
+# Sort agents by their mean scores while retaining original indices
+sorted_order = np.argsort(agent_means)
+sorted_agent_means = np.array(agent_means)[sorted_order]
+
+# Plotting
+plt.figure()
+plt.bar(agent_numbers, sorted_agent_means, tick_label=sorted_order + 1)
+plt.xlabel('Agent Number')
+plt.ylabel('Mean Score')
+plt.title('Agents Ranked by Mean Score (Ascending)')
+plt.show()
+
+# Find and print the agent with the median score
+median_value = np.median(sorted_agent_means)
+median_agent_idx = np.where(sorted_agent_means == median_value)[0][0]
+median_agent = sorted_order[median_agent_idx] + 1
+
+print(f"Agent {median_agent} has the median score of {median_value:.2f}")
+
+#######################################THIS PART IS ONLY FOR THE INITIALIZED AGENT##################################### ENDS HERE
+
+
+'''
 # Sum the timesteps and check if they match with rows of rl_data matrix
 for test_filepath, rl_filepath in zip(filepaths, steps_filepaths):
     test_data = np.loadtxt(test_filepath, delimiter=',', skiprows=1)
@@ -205,7 +270,6 @@ def plot_heatmap(x_coords, y_coords):
 # ################################DECLARE THE BATCH FOR THE HEATMAP##########################
 x_coords, y_coords = get_batch_data(1, test_data, rl_data)
 plot_heatmap(x_coords, y_coords)
-'''
 
 ################################################HUMAN ACTIONS##########################
 def get_game_human_actions(game_number, test_data, rl_data):

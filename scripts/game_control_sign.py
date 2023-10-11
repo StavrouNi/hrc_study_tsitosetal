@@ -18,8 +18,7 @@ import threading
 
 class RL_Control:
 	def __init__(self):
-		
-		#self.transfer_method= rospy.get_param("/rl_control/Game/lfd_transfer", False)	# if true Lerning from demonstations TF will be used, different setup of the experiment
+		self.initialized_agent = rospy.get_param("/rl_control/Game/initialized_agent",False)
 		self.lfd_expert_gameplay = rospy.get_param("/rl_control/Game/lfd_expert_gameplay",False) #if true the expert is playing we give! to experts buffer and demonstrations buffer
 		self.lfd_participant_gameplay = rospy.get_param("/rl_control/Game/lfd_participant_gameplay",False) #if true the participant is playing lfd transfer, we initialize the dual buffer
 		self.train_model = rospy.get_param('rl_control/Game/train_model', False)
@@ -32,8 +31,20 @@ class RL_Control:
 				self.agent.load_models()
 				rospy.logwarn("Successfully loaded model at {} for training".format(self.load_model_for_training_dir))
 			else:
-				self.agent = get_SAC_agent(observation_space=[4])
-				rospy.logwarn("User has not specified any model for training. Gonna initialize random agent")
+				if self.initialized_agent:
+					if self.lfd_participant_gameplay: #here we will give the initialized with the gu updates
+						lfd_initialized_agent_dir = rospy.get_param("/rl_control/Game/lfd_initialized_agent_dir","dir")
+						self.agent = get_SAC_agent(observation_space=[4], chkpt_dir = lfd_initialized_agent_dir)
+
+						rospy.logwarn("Initialized agent with GU")
+					else : #here is the simple initialized for no transfer or for expert
+
+						initialized_agent_dir = rospy.get_param("/rl_control/Game/initialized_agent_dir","dir")
+						self.agent = get_SAC_agent(observation_space=[4], chkpt_dir = initialized_agent_dir)
+						rospy.logwarn("Initialized agent without GU")
+				else:
+					self.agent = get_SAC_agent(observation_space=[4])
+					rospy.logwarn("User has not specified any model for training. Gonna initialize random agent")
 				
 			if self.transfer_learning:
 				load_model_for_transfer_learning_dir = rospy.get_param("rl_control/Game/load_model_transfer_learning_dir", "dir")
@@ -99,7 +110,6 @@ class RL_Control:
 		self.cmd_acc_x = []
 		self.cmd_acc_y = []
 		self.expert_action_flag = False
-		self.dummy=1
 		
 		# Experiment parameters for testing
 		self.test_max_timesteps = int(rospy.get_param('rl_control/Experiment/test/max_duration', 200)/self.action_duration)
@@ -237,7 +247,6 @@ class RL_Control:
 			self.state_info.append((0,)*len(self.state_info[0]))
 			if self.best_episode_reward < self.episode_reward:
 				self.best_episode_reward = self.episode_reward
-		self.dummy+=1
 	def e_greedy(self, randomness_request):
 		if randomness_request < self.randomness_threshold:
 			# Pure exploration
@@ -264,19 +273,14 @@ class RL_Control:
 		else:
 			if self.transfer_learning: 
 				rospy.loginfo("Training with TL")
-				if self.transfer_method: #if Learning from Demonstrations is true it will always play with participant agent, not expert agent
-					print('e greedy')  
-					print('lfD_Method')
-					self.e_greedy(randomness_request)					
-				else:  #else it computes the ppr_threshold for the expert agent
-					self.ppr_request = np.random.randint(100)/100
-					if self.ppr_request < self.ppr_threshold:
-						self.expert_action_flag = True  # Expert action is taken
-						print('Expert action') # if it returns expert action in ppr tl smthing is not ok
-						self.agent_action = self.expert_agent.actor.sample_act(self.observation)
-					else:
-						print('e greedy')
-						self.e_greedy(randomness_request)
+				self.ppr_request = np.random.randint(100)/100
+				if self.ppr_request < self.ppr_threshold:
+					self.expert_action_flag = True  # Expert action is taken
+					print('Expert action') # if it returns expert action in ppr tl smthing is not ok
+					self.agent_action = self.expert_agent.actor.sample_act(self.observation)
+				else:
+					print('e greedy')
+					self.e_greedy(randomness_request)
 				self.save_models = True
 			else:
 				if not self.load_model_for_training: #if LfD this loops plays, like a no transfer learning, so might change the previous for
@@ -287,12 +291,11 @@ class RL_Control:
 					rospy.loginfo("Training existing model")
 					self.agent_action = self.agent.actor.sample_act(self.observation)
 					self.save_models = True
-					# Append the expert action flag to state_info based on the test_agent_flag
-        	#self.test_state_info.append((expert_action_flag,))
 
-		agent_action_msg = Float64()
-		agent_action_msg.data = self.agent_action
-		self.agent_action_pub.publish(agent_action_msg)
+
+			agent_action_msg = Float64()
+			agent_action_msg.data = self.agent_action
+			self.agent_action_pub.publish(agent_action_msg)
 
 	def compute_reward(self):
 		if (distance.euclidean([self.ur3_state.pose.position.x, self.ur3_state.pose.position.y], self.goal) <= self.goal_dis and 
@@ -337,7 +340,7 @@ class RL_Control:
 		rospy.loginfo('Performing {} updates'.format(update_cycles))
 		for _ in tqdm(range(update_cycles)):
 			#self.agent.learn()
-			self.agent.learn(self.episode_number) #WHY I GAVE EPISODE NUMBER????
+			self.agent.learn(self.episode_number) #THIS episode number shoes the percentage we take from the replay buffer each time an offline update happens
 			self.agent.soft_update_target()
 		end_grad_updates = rospy.get_time()
 		self.episode_number += 1
@@ -351,7 +354,6 @@ class RL_Control:
 			self.reset()
 			self.run(test_i_episode)
 		self.test_agent_flag = False
-		self.agent.save_models()
 
 
 	def train(self, i_episode):
@@ -372,7 +374,6 @@ class RL_Control:
 				train_msg = Bool()
 				train_msg.data = False
 				self.train_pub.publish(train_msg)
-		#self.agent.save_models()
 
 	def compute_update_cycles(self):
 		if self.scheduling == 'uniform':
@@ -408,8 +409,8 @@ def game_loop(game):
 		rospy.loginfo('Training')
 		game.test() # test with random agent initial games first 10 games
 
-		if game.lfd_participant_gameplay:
-			game.initiale_offline_update() # the first offline for LfD if the participant is playing
+		#if game.lfd_participant_gameplay: # TO_DO This might need to be removed because we load the agent with the initial updates from the start
+			#game.initiale_offline_update() # the first offline for LfD if the participant is playing
 		for i_episode in range(1, game.max_episodes+1):
 			game.reset()
 			game.run(i_episode)
