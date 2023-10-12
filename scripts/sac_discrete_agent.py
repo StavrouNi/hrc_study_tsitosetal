@@ -18,8 +18,8 @@ class DiscreteSACAgent:
         self.tau = rospy.get_param('rl_control/SAC/tau', 100)            
         self.alpha = rospy.get_param('rl_control/SAC/alpha', 100)
         self.beta = rospy.get_param('rl_control/SAC/beta', 100)
-        self.target_entropy = rospy.get_param('rl_control/SAC/target_entropy_ratio', 100)
-
+        #self.target_entropy = rospy.get_param('rl_control/SAC/target_entropy_ratio', 100)
+        self.target_entropy_ratio= 0.98
         self.update_interval = update_interval
         self.buffer_max_size = buffer_max_size
         self.scale = reward_scale
@@ -27,7 +27,8 @@ class DiscreteSACAgent:
         self.input_dims = input_dims[0]
         self.n_actions = n_actions
         self.chkpt_dir = chkpt_dir
-        self.target_entropy = target_entropy_ratio  # -np.prod(action_space.shape)
+        #self.target_entropy = target_entropy_ratio  # -np.prod(action_space.shape)\######
+        
       
         self.actor = Actor(self.input_dims, self.n_actions, self.layer1_size, chkpt_dir=self.chkpt_dir).to(device)
         self.critic = Critic(self.input_dims, self.n_actions, self.layer1_size, chkpt_dir=self.chkpt_dir).to(device)
@@ -52,7 +53,8 @@ class DiscreteSACAgent:
         # target -> maximum entropy (same prob for each action)
         # - log ( 1 / A) = log A
         # self.target_entropy = -np.log(1.0 / action_dim) * self.target_entropy_ratio
-        # self.target_entropy = np.log(action_dim) * self.target_entropy_ratio
+        self.target_entropy = np.log(3) * self.target_entropy_ratio
+        print(self.target_entropy)
 
         self.log_alpha = torch.zeros(1, requires_grad=True, device=device)
         self.alpha_optim = torch.optim.Adam([self.log_alpha], lr=self.lr, eps=1e-4)

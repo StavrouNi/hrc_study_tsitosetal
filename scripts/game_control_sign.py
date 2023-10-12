@@ -15,6 +15,7 @@ from tqdm import tqdm
 from pydub import AudioSegment
 from pydub.playback import play
 import threading
+import curses
 
 class RL_Control:
 	def __init__(self):
@@ -185,7 +186,9 @@ class RL_Control:
 			self.observation = self.get_state()
 			if rospy.get_time() - tmp_time > self.action_duration:
 				tmp_time = rospy.get_time()
-				randomness_request = i_episode if not self.test_agent_flag else self.test_count
+				#randomness_request = i_episode if not self.test_agent_flag else self.test_count
+				randomness_request = self.test_count # this change declares that only the first 10 will be played with R A
+
 				self.compute_agent_action(randomness_request)
 			
 			rospy.sleep(self.action_duration)
@@ -248,7 +251,7 @@ class RL_Control:
 			if self.best_episode_reward < self.episode_reward:
 				self.best_episode_reward = self.episode_reward
 	def e_greedy(self, randomness_request):
-		if randomness_request < self.randomness_threshold:
+		if randomness_request <= self.randomness_threshold:
 			# Pure exploration
 			self.agent_action = np.random.randint(self.agent.n_actions)
 		else:
@@ -257,14 +260,14 @@ class RL_Control:
 		if self.test_agent_flag:
 			self.save_models = False
 		else:
-			self.save_models = (randomness_request >= self.randomness_threshold)
+			self.save_models = (randomness_request > self.randomness_threshold)
 
 	def compute_agent_action(self, randomness_request=None):
 		assert randomness_request != None, 'randomness_request is None'
 		self.expert_action_flag = False
 		if self.test_agent_flag: #we are in testing state 
 			if self.train_model:
-				rospy.loginfo("Testing with random agent") if randomness_request < self.randomness_threshold else rospy.loginfo("Testing with trained agent")
+				rospy.loginfo("Testing with random agent") if randomness_request <= self.randomness_threshold else rospy.loginfo("Testing with trained agent")
 				self.e_greedy(randomness_request)
 			else:
 				rospy.loginfo("Testing with trained agent")
@@ -293,9 +296,9 @@ class RL_Control:
 					self.save_models = True
 
 
-			agent_action_msg = Float64()
-			agent_action_msg.data = self.agent_action
-			self.agent_action_pub.publish(agent_action_msg)
+		agent_action_msg = Float64()
+		agent_action_msg.data = self.agent_action
+		self.agent_action_pub.publish(agent_action_msg)
 
 	def compute_reward(self):
 		if (distance.euclidean([self.ur3_state.pose.position.x, self.ur3_state.pose.position.y], self.goal) <= self.goal_dis and 
@@ -403,12 +406,25 @@ class RL_Control:
 		train_msg = Bool()
 		train_msg.data = False
 		self.train_pub.publish(train_msg)
+def wait_for_keypress(): 
+    stdscr = curses.initscr()
+    curses.noecho()
+    stdscr.nodelay(True)
+    stdscr.refresh()
+    print("Press any key to continue...")
+    try:
+        while True:
+            key = stdscr.getch()
+            if key != -1:
+                return
+    finally:
+        curses.endwin()
 
 def game_loop(game):
 	if game.train_model:
 		rospy.loginfo('Training')
-		game.test() # test with random agent initial games first 10 games
-
+		game.test() # test with random agent initial games first 10 games	
+		#wait_for_keypress()
 		#if game.lfd_participant_gameplay: # TO_DO This might need to be removed because we load the agent with the initial updates from the start
 			#game.initiale_offline_update() # the first offline for LfD if the participant is playing
 		for i_episode in range(1, game.max_episodes+1):
