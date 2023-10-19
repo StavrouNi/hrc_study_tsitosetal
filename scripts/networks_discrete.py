@@ -155,7 +155,7 @@ class Dual_ReplayBuffer:
 
     # sample from the memory
     def sample(self, batch_size, episode_number):
-
+        print(self.percentages[episode_number])
         idx_exp = [random.randint(0, len(self.expert_storage) - 1) for _ in range(int(batch_size*self.percentages[episode_number]))]
         idx = [random.randint(0, len(self.storage) - 1) for _ in range(int(batch_size*(1-self.percentages[episode_number])))]
         return self._encode_sample(idx,idx_exp)

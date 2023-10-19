@@ -36,10 +36,8 @@ class RL_Control:
 					if self.lfd_participant_gameplay: #here we will give the initialized with the gu updates
 						lfd_initialized_agent_dir = rospy.get_param("/rl_control/Game/lfd_initialized_agent_dir","dir")
 						self.agent = get_SAC_agent(observation_space=[4], chkpt_dir = lfd_initialized_agent_dir)
-
 						rospy.logwarn("Initialized agent with GU")
 					else : #here is the simple initialized for no transfer or for expert
-
 						initialized_agent_dir = rospy.get_param("/rl_control/Game/initialized_agent_dir","dir")
 						self.agent = get_SAC_agent(observation_space=[4], chkpt_dir = initialized_agent_dir)
 						rospy.logwarn("Initialized agent without GU")
@@ -426,7 +424,7 @@ def game_loop(game):
 		game.test() # test with random agent initial games first 10 games	
 		#wait_for_keypress()
 		#if game.lfd_participant_gameplay: # TO_DO This might need to be removed because we load the agent with the initial updates from the start
-			#game.initiale_offline_update() # the first offline for LfD if the participant is playing
+		#game.initiale_offline_update() # the first offline for LfD if the participant is playing
 		for i_episode in range(1, game.max_episodes+1):
 			game.reset()
 			game.run(i_episode)

@@ -23,18 +23,6 @@ def ExpertoDemo(filename, save_path):
 
     extracted_games = []
 
-    #for episode_idx, episode in enumerate(episodes):
-    #    column_3_values = episode[:, 2]
-    #    winning_games_indices = np.where((column_3_values == 10) & (episode[:, -1] == True))[0]
-    #    num_extracted_games = min(num_extracted_games_per_episode[episode_idx], len(winning_games_indices))
-    #    for game_idx in winning_games_indices[:num_extracted_games]:
-    #        game_start_idx = game_idx - 1
-    #        while game_start_idx >= 0 and not episode[game_start_idx, -1]:
-    #            game_start_idx -= 1
-    #        game_start_idx = max(0, game_start_idx)  # Reset to 0 if it becomes negative
-    #        extracted_games.append(episode[game_start_idx+1:game_idx + 1])
-
-    #    print("Number of extracted winning games episode:", episode_idx, num_extracted_games)
 
     for episode_idx, episode in enumerate(episodes): #with this updated method we collect the largest winning games of the 2,3,3,2 of each episode 
         column_3_values = episode[:, 2]
@@ -48,16 +36,14 @@ def ExpertoDemo(filename, save_path):
                 game_start_idx -= 1
             game_start_idx = max(0, game_start_idx)  # Reset to 0 if it becomes negative
             winning_games.append(episode[game_start_idx+1:game_idx + 1])  # Exclude the last line (when looking backwards)
+        print("Number of WINNING winning games total:", len(winning_games))  # Print the length of demo_games
 
         # Shuffle the winning games and extract the specified number of games # ##FOR RANDOM
         np.random.shuffle(winning_games)
         num_extracted_games = min(num_extracted_games_per_episode[episode_idx], len(winning_games))
         extracted_games.extend(winning_games[:num_extracted_games])
 
-        # Sort winning games by length in descending order and extract the largest ones##FOR LARGEST GAMES
-        #winning_games = sorted(winning_games, key=len, reverse=True)
-        #num_extracted_games = min(num_extracted_games_per_episode[episode_idx], len(winning_games))
-        #extracted_games.extend(winning_games[:num_extracted_games])
+
 
     for game in extracted_games:
         print("Game shape:", game.shape)
@@ -66,19 +52,27 @@ def ExpertoDemo(filename, save_path):
         print("Second episode:", episodes[1])
     if extracted_games:
         print("First game of extracted winning games:", extracted_games[0])
-
     print("Number of extracted winning games total:", len(extracted_games))
 
     # Save the demogames to an array and to a specific path
     demo_games=np.vstack(extracted_games)
     #np.save(save_path, demo_games, fix_imports=True)
+        # Sort the extracted games by their length in ascending order
+    extracted_games.sort(key=lambda x: x.shape[0])
+
+    # Keep the shortest winning games if there are more than needed
+    for episode_idx, num_to_keep in enumerate(num_extracted_games_per_episode):
+        if num_to_keep < len(extracted_games):
+            extracted_games = extracted_games[:num_to_keep]
     with open(save_path, 'wb') as f:
         pickle.dump(demo_games, f, protocol=2)
+
     print("shape", demo_games.shape)
     print(type(demo_games))
+    print("Number of extracted winning games total:", len(demo_games))  # Print the length of demo_games
 
     return demo_games
-save_path='/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer/demo_data_random.npy'
+save_path='/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer/final_demo_buffer.npy'
 
-filename = '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/expert_buffer/buffer_data.npy'
+filename = '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/expert_buffer/buffer_data_2.npy'
 ExpertoDemo(filename, save_path)

@@ -1,10 +1,10 @@
 Game:
-  participant_name: "NICKEXPERT"
+  participant_name: "TEST"
   full_path: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/"
   #LfD arguments
   #lfd_transfer: False #true if we using learning from Demonstrations transfer learning
-  lfd_expert_gameplay: True  #true if the expert is playing and collecting demonstration and expert data and place them to the buffers
-  lfd_participant_gameplay: False #true if the participant is playing with transfer LfD
+  lfd_expert_gameplay: False  #true if the expert is playing and collecting demonstration and expert data and place them to the buffers
+  lfd_participant_gameplay: True #true if the participant is playing with transfer LfD
 
   #games_to_capture: #The games that the Demonstrations buffer wil keep from the gameplay with the expert
   train_model: True # True if no training happens
@@ -13,14 +13,13 @@ Game:
   load_model_transfer_learning: False # True if loading model for transfer_learning 
   load_model_transfer_learning_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/rl_models/expert" # Location of the model for transfer learning 
   load_model_testing_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/rl_models/98K_every10_uniform_200ms_NIKOLAS_no_TL_13" # Location of the model for testing
-  load_demonstrations_data_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer/demo_data_random.npy" #Location of the expert experience for the participants buffer will be stored
-  #load_demonstrations_data_dir: "/home/nick/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer"
+  load_demonstrations_data_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer/final_demo_buffer.npy" #Location of the expert experience for the participants buffer will be stored
   initialized_agent: True
-  initialized_agent_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/rl_models/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_4"
-  lfd_initialized_agent_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/rl_models/4K_every10_uniform_200ms_lfdinitializedagent_LfD_TL_2"
+  initialized_agent_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/initialized_agents/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_4" #no transfer initialixation
+  lfd_initialized_agent_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/initialized_agents/70K_every10_uniform_200ms_LFDINITIALIZATIONFINAL_LfD_TL_3"
 
   save: True # Save models and logs
-  goal: [-0.264, 0.242] # goal position
+  goal: [-0.26, 0.25] #[-0.264, 0.242] # goal position #NEW CALLIBRATION
   goal_distance: 0.01 #0.01 maximum distance from goal in order to win
   goal_velocity: 0.05 #0.05 maximum speed in order to win
   win_audio: "street-fighter-ii-you-win-perfect.mp3" # audio for win
@@ -38,7 +37,7 @@ SAC:
   tau: 0.005
   alpha: 0.0003
   beta: 0.0003
-  target_entropy_ratio: 0.4
+  target_entropy_ratio: 0.4 #changed using the correct in networks and sac
   buffer_max_size: 1000000
 
 
@@ -53,7 +52,7 @@ Experiment:
   start_training_on_episode: 10 # Will not train the agent before this trial
   stop_random_agent: 10 #10 Stop using random agent on this trial and start using SAC####
   learn_every_n_episodes: 10 # Perform offline gradient updates after every `learn_every_n_episodes` episodes
-  total_update_cycles: 20000  #98000 Total number of offline gradient updates throughout the whole experiment
+  total_update_cycles: 70000  #98000 Total number of offline gradient updates throughout the whole experiment
   reward_scale: 2 # Scale for the reward
   number_of_agent_actions: 3 # number of discrete actions
   win_reward: 10 # reward at win
@@ -61,5 +60,5 @@ Experiment:
 
   test:
     max_episodes: 10 # Total testing episodes in a training batch
-    max_duration: 30 #30 Max duration of an episode test (in seconds). An episode ends if the ball hits the target or if we reach the time limit
+    max_duration: 3 #30 Max duration of an episode test (in seconds). An episode ends if the ball hits the target or if we reach the time limit
 
