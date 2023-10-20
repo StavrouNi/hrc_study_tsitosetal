@@ -1,5 +1,5 @@
 Game:
-  participant_name: "TEST"
+  participant_name: "KXM"
   full_path: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/"
   #LfD arguments
   #lfd_transfer: False #true if we using learning from Demonstrations transfer learning
@@ -60,5 +60,5 @@ Experiment:
 
   test:
     max_episodes: 10 # Total testing episodes in a training batch
-    max_duration: 3 #30 Max duration of an episode test (in seconds). An episode ends if the ball hits the target or if we reach the time limit
+    max_duration: 30 #30 Max duration of an episode test (in seconds). An episode ends if the ball hits the target or if we reach the time limit
 
