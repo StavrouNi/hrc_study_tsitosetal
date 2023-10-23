@@ -1,5 +1,5 @@
 Game:
-  participant_name: "KXM"
+  participant_name: "BXB"
   full_path: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/"
   #LfD arguments
   #lfd_transfer: False #true if we using learning from Demonstrations transfer learning
@@ -19,7 +19,7 @@ Game:
   lfd_initialized_agent_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/initialized_agents/70K_every10_uniform_200ms_LFDINITIALIZATIONFINAL_LfD_TL_3"
 
   save: True # Save models and logs
-  goal: [-0.26, 0.25] #[-0.264, 0.242] # goal position #NEW CALLIBRATION
+  goal: [-0.26, 0.247] #[-0.264, 0.242] # goal position #NEW CALLIBRATION
   goal_distance: 0.01 #0.01 maximum distance from goal in order to win
   goal_velocity: 0.05 #0.05 maximum speed in order to win
   win_audio: "street-fighter-ii-you-win-perfect.mp3" # audio for win

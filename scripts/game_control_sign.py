@@ -96,7 +96,6 @@ class RL_Control:
 		self.human_action = None
 		self.rest_period = rospy.get_param("rl_control/Game/rest_period", 120)
 		self.human_actions = []
-		self.random_agent_flag = []
 		self.agent_actions = []
 		self.ee_pos_x_prev = []
 		self.ee_pos_y_prev = []
@@ -138,7 +137,6 @@ class RL_Control:
 		self.timeout = False
 		self.episode_reward = 0
 		self.human_actions = []
-		self.random_agent_flag = []
 		self.agent_actions = []
 		self.ee_pos_x_prev = []
 		self.ee_pos_y_prev = []
@@ -218,7 +216,7 @@ class RL_Control:
 			self.cmd_acc_y.append(cmd_acc_agent)
 			if self.timestep == 1:
 				self.start_time = rospy.get_time()
-			
+		
 			if not self.test_agent_flag:
 				self.save_experience([self.observation, self.agent_action, self.reward, self.observation_, self.done])
 			
@@ -227,8 +225,8 @@ class RL_Control:
 			if self.done:
 				self.end_time = rospy.get_time()
 				break
-		
-		new_state_info = list(zip(self.random_agent_flag,self.human_actions, self.agent_actions, self.ee_pos_x_prev, self.ee_pos_y_prev, self.ee_vel_x_prev, self.ee_vel_y_prev, self.ee_pos_x_next, self.ee_pos_y_next, self.ee_vel_x_next, self.ee_vel_y_next, self.cmd_acc_x, self.cmd_acc_y))
+		print("timestep", self.timestep)
+		new_state_info = list(zip(self.human_actions, self.agent_actions, self.ee_pos_x_prev, self.ee_pos_y_prev, self.ee_vel_x_prev, self.ee_vel_y_prev, self.ee_pos_x_next, self.ee_pos_y_next, self.ee_vel_x_next, self.ee_vel_y_next, self.cmd_acc_x, self.cmd_acc_y))
 		
 		if self.test_agent_flag:
 			self.test_reward_history.append(self.episode_reward)
@@ -248,6 +246,10 @@ class RL_Control:
 			self.state_info.append((0,)*len(self.state_info[0]))
 			if self.best_episode_reward < self.episode_reward:
 				self.best_episode_reward = self.episode_reward
+		print( "New state info=", new_state_info)
+		print( "state info=", self.state_info)
+		print( "test_state info=", self.test_state_info)
+
 	def e_greedy(self, randomness_request):
 		if randomness_request <= self.randomness_threshold:
 			# Pure exploration
@@ -285,7 +287,7 @@ class RL_Control:
 				self.save_models = True
 			else:
 				if not self.load_model_for_training: #if LfD this loops plays, like a no transfer learning, so might change the previous for
-					rospy.loginfo("Training from scratch")
+					#rospy.loginfo("Training from scratch")
 					rospy.loginfo("Training with random agent") if randomness_request < self.randomness_threshold else rospy.loginfo('Training with trained agent')
 					self.e_greedy(randomness_request)
 				else:

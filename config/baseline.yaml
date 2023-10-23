@@ -15,7 +15,7 @@ min_y: 0.149
 start_position: [-0.26, 0.161, 0.174]
 
 # Goal position
-goal_position: 0.25 #0.246
+goal_position: 0.247 #0.246
 
 # Number of games
 num_of_games: 10
