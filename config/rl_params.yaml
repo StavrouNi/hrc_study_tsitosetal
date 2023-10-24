@@ -1,10 +1,10 @@
 Game:
-  participant_name: "BXB"
+  participant_name: "EXPERT2"
   full_path: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/"
   #LfD arguments
   #lfd_transfer: False #true if we using learning from Demonstrations transfer learning
-  lfd_expert_gameplay: False  #true if the expert is playing and collecting demonstration and expert data and place them to the buffers
-  lfd_participant_gameplay: True #true if the participant is playing with transfer LfD
+  lfd_expert_gameplay: True  #true if the expert is playing and collecting demonstration and expert data and place them to the buffers
+  lfd_participant_gameplay: False #true if the participant is playing with transfer LfD
 
   #games_to_capture: #The games that the Demonstrations buffer wil keep from the gameplay with the expert
   train_model: True # True if no training happens
@@ -60,5 +60,5 @@ Experiment:
 
   test:
     max_episodes: 10 # Total testing episodes in a training batch
-    max_duration: 30 #30 Max duration of an episode test (in seconds). An episode ends if the ball hits the target or if we reach the time limit
+    max_duration: 1 #30 Max duration of an episode test (in seconds). An episode ends if the ball hits the target or if we reach the time limit
 
