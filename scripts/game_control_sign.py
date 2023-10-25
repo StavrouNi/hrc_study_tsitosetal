@@ -225,7 +225,7 @@ class RL_Control:
 			if self.done:
 				self.end_time = rospy.get_time()
 				break
-		print("timestep", self.timestep)
+		#print("timestep", self.timestep)
 		new_state_info = list(zip(self.human_actions, self.agent_actions, self.ee_pos_x_prev, self.ee_pos_y_prev, self.ee_vel_x_prev, self.ee_vel_y_prev, self.ee_pos_x_next, self.ee_pos_y_next, self.ee_vel_x_next, self.ee_vel_y_next, self.cmd_acc_x, self.cmd_acc_y))
 		
 		if self.test_agent_flag:
@@ -246,9 +246,9 @@ class RL_Control:
 			self.state_info.append((0,)*len(self.state_info[0]))
 			if self.best_episode_reward < self.episode_reward:
 				self.best_episode_reward = self.episode_reward
-		print( "New state info=", new_state_info)
-		print( "state info=", self.state_info)
-		print( "test_state info=", self.test_state_info)
+		#print( "New state info=", new_state_info)
+		#print( "state info=", self.state_info)
+		#print( "test_state info=", self.test_state_info)
 
 	def e_greedy(self, randomness_request):
 		if randomness_request <= self.randomness_threshold:

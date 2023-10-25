@@ -1,16 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-'''
 # Load data for multiple participants # for the first 3 plots WINS REWARDS TRAVELLED DISTANCE we can have more than 1 filepath 
 filepaths = [
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/98K_every10_uniform_200ms_ChristosPilot_LfD_TL_1/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_AXAXG_no_TL_1/data/test_data.csv',
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/98K_every10_uniform_200ms_NICKEXPERT_LfD_TL_1/data/test_data.csv'
     # Add more file paths as needed
 ]
 
 steps_filepaths = [    
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/98K_every10_uniform_200ms_ChristosPilot_LfD_TL_1/data/rl_test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_AXAXG_no_TL_1/data/rl_test_data.csv',
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/98K_every10_uniform_200ms_NICKEXPERT_LfD_TL_1/data/rl_test_data.csv'
 ]
 '''
@@ -291,4 +290,3 @@ def plot_human_actions_histogram(game_number, test_data, rl_data):
 
 # Plot human actions for a specific game
 plot_human_actions_histogram(59, test_data, rl_data)  # For game 59
-'''
