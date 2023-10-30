@@ -12,7 +12,7 @@ max_y: 0.330
 min_y: 0.149
 
 # Starting positions
-start_position: [-0.263, 0.161, 0.174]
+start_position: [-0.265, 0.161, 0.174]
 
 # Goal position
 goal_position: 0.251 #0.246

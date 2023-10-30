@@ -22,7 +22,7 @@ def ExpertoDemo(filename, save_path):
         end_idx = split[-1] + 1
         split_data = data[start_idx:end_idx]
         episodes.append(split_data)
-        print("Total games in episode {}: {}".format(len(episodes), len(split_data)))  # Added this line
+        #print("Total games in episode {}: {}".format(len(episodes), len(split_data)))  # Added this line
 
     extracted_games = []
 
@@ -47,7 +47,7 @@ def ExpertoDemo(filename, save_path):
         extracted_games.extend(winning_games[:num_extracted_games])
 
 
-    print(extracted_games)
+    #print(extracted_games)
     for game in extracted_games:
         print("Game shape:", game.shape)
 
@@ -70,17 +70,11 @@ def ExpertoDemo(filename, save_path):
     with open(save_path, 'wb') as f:
         pickle.dump(demo_games, f, protocol=2)
     print("Shortest games:")
-    for i, game in enumerate(extracted_games[:5]):
-        print("Game {} shape:".format(i+1), game.shape)
-        print(game)
-        print("-" * 30)
+
 
     print("shape", demo_games.shape)
-    #print(type(demo_games))
-   # print("Number of extracted winning games total:", len(demo_games))  # Print the length of demo_games
-    #print("Total games overall: {}".format(len(data)))
-    return demo_games
-save_path='/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer/DELETE.npy'
 
-filename = '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/expert_buffer/buffer_data_3.npy'
+save_path='/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer/FINALL28.npy'
+
+filename = '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/expert_buffer/buffer_data.npy'
 ExpertoDemo(filename, save_path)

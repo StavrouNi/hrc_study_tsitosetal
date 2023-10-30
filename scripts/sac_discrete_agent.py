@@ -28,14 +28,17 @@ class DiscreteSACAgent:
         self.n_actions = n_actions
         self.chkpt_dir = chkpt_dir
         #self.target_entropy = target_entropy_ratio  # -np.prod(action_space.shape)\######
-        
+        # Lists to store entropy and temperature values
+        #self.entropy_history = []
+        #self.temperature_history = []
+
       
         self.actor = Actor(self.input_dims, self.n_actions, self.layer1_size, chkpt_dir=self.chkpt_dir).to(device)
         self.critic = Critic(self.input_dims, self.n_actions, self.layer1_size, chkpt_dir=self.chkpt_dir).to(device)
         # The above 3 lines are for the LfD participants gameplay to initialize the dual buffer
         self.demo_data = rospy.get_param("rl_control/Game/load_demonstrations_data_dir","opt/ros/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer.npy")
         self.lfd_participant_gameplay = rospy.get_param('rl_control/Game/lfd_participant_gameplay', False)
-        self.percentages = [0.8, 0.6, 0.4, 0.2, 0.1]   #[1.0, 0.8, 0.6, 0.4, 0.2, 0.1] Because we give the first at 
+        self.percentages =  [0.8, 0.6, 0.4, 0.2, 0.1]   # Because we give the first 
         self.target_critic = Critic(self.input_dims, self.n_actions, self.layer1_size, chkpt_dir=self.chkpt_dir).to(
             device)
 
@@ -95,6 +98,10 @@ class DiscreteSACAgent:
         torch.nn.utils.clip_grad_norm_(self.actor.parameters(), 5)
         update_params(self.actor_optim, policy_loss)
         update_params(self.alpha_optim, entropy_loss)
+
+        # Save entropy and temperature values
+        #self.entropy_history.append(entropies.detach().cpu().numpy())
+        #self.temperature_history.append(self.log_alpha.exp().detach().cpu().item())
 
         return mean_q1, mean_q2, entropies
 

@@ -15,4 +15,4 @@ min_y: 0.162
 start_position_0: [-0.346, 0.333, 0.173] # down left
 start_position_1: [-0.345, 0.172, 0.173] # down right
 start_position_2: [-0.185, 0.332, 0.173] # up left 
-start_position_3: [-0.184, 0.174, 0.173] # up right
+start_position_3: [-0.184, 0.172, 0.173] # up right

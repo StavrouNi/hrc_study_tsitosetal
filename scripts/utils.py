@@ -102,6 +102,8 @@ def save_data(game, data_dir):
 		np.savetxt(outputFile, [game.test_state_info[0]], delimiter=',', fmt='%s')
 		np.savetxt(outputFile, game.test_state_info[1:], delimiter=',')
 
+
+
 def plot_statistics(game, plot_dir):
 	fig = plt.figure()
 	ax = plt.axes()

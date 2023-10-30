@@ -3,13 +3,13 @@ import matplotlib.pyplot as plt
 
 # Load data for multiple participants # for the first 3 plots WINS REWARDS TRAVELLED DISTANCE we can have more than 1 filepath 
 filepaths = [
-    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_AXAXG_no_TL_1/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_EXPERT28_LfD_TL_1/data/data.csv',
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/98K_every10_uniform_200ms_NICKEXPERT_LfD_TL_1/data/test_data.csv'
     # Add more file paths as needed
 ]
 
 steps_filepaths = [    
-    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_AXAXG_no_TL_1/data/rl_test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_EXPERT28_LfD_TL_1/data/rl_data.csv',
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/98K_every10_uniform_200ms_NICKEXPERT_LfD_TL_1/data/rl_test_data.csv'
 ]
 '''
@@ -93,7 +93,7 @@ for filepath in filepaths:
     test_data = np.loadtxt(filepath, delimiter=',', skiprows=1)
     win_counts = []
     for i in range(0, len(test_data), 10):
-        block = test_data[i:i+10, 0]
+        block = test_data[i:i+10, 1]
         win_count = np.sum(block != -150) #-150 is a loss
         win_counts.append(win_count)
     all_participant_wins.append(win_counts)
@@ -121,7 +121,7 @@ for filepath in filepaths:
     test_data = np.loadtxt(filepath, delimiter=',', skiprows=1)
     rewards_per_block = []
     for i in range(0, len(test_data), 10):
-        block = test_data[i:i+10, 0]
+        block = test_data[i:i+10, 1]
         block_rewards = 150 + block  # Subtract 10 from each game's value
         #print(block_rewards)
         block_reward = np.mean(block_rewards)  # Sum up the rewards in the block
@@ -267,7 +267,7 @@ def plot_heatmap(x_coords, y_coords):
     plt.show()
 
 # ################################DECLARE THE BATCH FOR THE HEATMAP##########################
-x_coords, y_coords = get_batch_data(1, test_data, rl_data)
+x_coords, y_coords = get_batch_data(0, test_data, rl_data)
 plot_heatmap(x_coords, y_coords)
 
 ################################################HUMAN ACTIONS##########################
