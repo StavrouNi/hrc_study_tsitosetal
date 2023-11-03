@@ -15,21 +15,21 @@ steps_filepaths = [
 '''
 #######################################THIS PART IS ONLY FOR THE INITIALIZED AGENT#####################################
 initialization_filepaths = [
-    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_1/data/test_data.csv',
-    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_2/data/test_data.csv',
-    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_3/data/test_data.csv',
-    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_4/data/test_data.csv',
-    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_5/data/test_data.csv',
-    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_6/data/test_data.csv',
-    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_7/data/test_data.csv',
-    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_8/data/test_data.csv',
-    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_9/data/test_data.csv',
-    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_10/data/test_data.csv',
-    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_11/data/test_data.csv',
-    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_12/data/test_data.csv',
-    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_13/data/test_data.csv',
-    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_14/data/test_data.csv',
-    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_15/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_1/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_2/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_3/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_4/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_5/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_6/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_7/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_8/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_9/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_10/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_11/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_12/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_13/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_14/data/test_data.csv',
+    '/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/0K_every10_uniform_200ms_INITIALIZATIONN_no_TL_15/data/test_data.csv',
 
 ]
 
