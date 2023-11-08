@@ -3,9 +3,8 @@ import torch
 import numpy as np
 from networks_discrete import update_params, Actor, Critic, ReplayBuffer, Dual_ReplayBuffer
 import torch.nn.functional as F
-
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
+import os
 class DiscreteSACAgent:
     def __init__(self, alpha=0.0003, beta=0.0003, input_dims=[8],
                  gamma=0.99, n_actions=3, buffer_max_size=1000000, tau=0.005,
@@ -19,7 +18,7 @@ class DiscreteSACAgent:
         self.alpha = rospy.get_param('rl_control/SAC/alpha', 100)
         self.beta = rospy.get_param('rl_control/SAC/beta', 100)
         #self.target_entropy = rospy.get_param('rl_control/SAC/target_entropy_ratio', 100)
-        self.target_entropy_ratio= 0.98
+        self.target_entropy_ratio= 0.5 ##########################################################this is what we change for the entropy
         self.update_interval = update_interval
         self.buffer_max_size = buffer_max_size
         self.scale = reward_scale
@@ -29,8 +28,9 @@ class DiscreteSACAgent:
         self.chkpt_dir = chkpt_dir
         #self.target_entropy = target_entropy_ratio  # -np.prod(action_space.shape)\######
         # Lists to store entropy and temperature values
-        #self.entropy_history = []
-        #self.temperature_history = []
+        self.entropy_history = []
+        self.entropy_loss_history = []
+        self.temperature_history = []
 
       
         self.actor = Actor(self.input_dims, self.n_actions, self.layer1_size, chkpt_dir=self.chkpt_dir).to(device)
@@ -57,6 +57,8 @@ class DiscreteSACAgent:
         # - log ( 1 / A) = log A
         # self.target_entropy = -np.log(1.0 / action_dim) * self.target_entropy_ratio
         self.target_entropy = np.log(3) * self.target_entropy_ratio
+        #self.target_entropy = -np.log(1.0 / 2.0) * self.target_entropy_ratio
+
         print(self.target_entropy)
 
         self.log_alpha = torch.zeros(1, requires_grad=True, device=device)
@@ -68,6 +70,9 @@ class DiscreteSACAgent:
             self.memory = ReplayBuffer(self.buffer_max_size)
             
     def learn(self,episode_number, interaction=None):
+        #self.entropy_history= []
+        #self.entropy_loss_history = []
+        #self.temperature_history = []
         if interaction is None:
             if self.lfd_participant_gameplay:
                 states, actions, rewards, states_, dones= self.memory.sample(self.batch_size,episode_number) # TO_DO add a print line here to make sure % are correct
@@ -100,8 +105,16 @@ class DiscreteSACAgent:
         update_params(self.alpha_optim, entropy_loss)
 
         # Save entropy and temperature values
-        #self.entropy_history.append(entropies.detach().cpu().numpy())
-        #self.temperature_history.append(self.log_alpha.exp().detach().cpu().item())
+        self.entropy_history.append(entropies.mean().item())
+        print("entropies", entropies.mean().item())
+
+        self.entropy_loss_history.append(entropy_loss.item())
+        print("entropy loss", entropy_loss.item())
+
+        self.temperature_history.append(self.log_alpha.exp().item())
+        print("temp", self.log_alpha.exp())
+
+        
 
         return mean_q1, mean_q2, entropies
 
@@ -214,8 +227,3 @@ class DiscreteSACAgent:
             self.critic.save_checkpoint()
             self.target_critic.save_checkpoint()
 
-    def load_models(self):
-        print('.... loading models ....')
-        self.actor.load_checkpoint()
-        self.critic.load_checkpoint()
-        self.target_critic.load_checkpoint()

@@ -120,6 +120,7 @@ class RL_Control:
 		self.test_travelled_distance = []
 		self.test_number_of_timesteps = []
 		self.test_state_info = [self.column_names] 
+		self.temp=[("temp","entropy","entropy loss")]
 
 		self.ur3_state_sub = rospy.Subscriber('ur3_cartesian_velocity_controller/ee_state', PoseTwist, self.ee_state_callback)
 		self.human_action_sub = rospy.Subscriber('cmd_vel', Twist, self.human_callback)
@@ -246,9 +247,7 @@ class RL_Control:
 			self.state_info.append((0,)*len(self.state_info[0]))
 			if self.best_episode_reward < self.episode_reward:
 				self.best_episode_reward = self.episode_reward
-		#print( "New state info=", new_state_info)
-		#print( "state info=", self.state_info)
-		#print( "test_state info=", self.test_state_info)
+
 
 	def e_greedy(self, randomness_request):
 		if randomness_request <= self.randomness_threshold:
@@ -370,13 +369,17 @@ class RL_Control:
 				if self.update_cycles > 0:
 					grad_updates_duration = self.grad_updates()
 					self.agent.save_models()
+					temperature=list(zip(self.agent.temperature_history,self.agent.entropy_history,self.agent.entropy_loss_history))
+					self.temp.extend(temperature) 
 				remaining_wait_time = self.rest_period - (rospy.get_time() - start_training_time)
 				start_remaining_time = rospy.get_time()
+
 				while rospy.get_time() - start_remaining_time < remaining_wait_time:
 					pass
 				train_msg = Bool()
 				train_msg.data = False
 				self.train_pub.publish(train_msg)
+		
 
 	def compute_update_cycles(self):
 		if self.scheduling == 'uniform':
