@@ -70,9 +70,7 @@ class DiscreteSACAgent:
             self.memory = ReplayBuffer(self.buffer_max_size)
             
     def learn(self,episode_number, interaction=None):
-        #self.entropy_history= []
-        #self.entropy_loss_history = []
-        #self.temperature_history = []
+
         if interaction is None:
             if self.lfd_participant_gameplay:
                 states, actions, rewards, states_, dones= self.memory.sample(self.batch_size,episode_number) # TO_DO add a print line here to make sure % are correct

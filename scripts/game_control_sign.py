@@ -359,6 +359,10 @@ class RL_Control:
 
 
 	def train(self, i_episode):
+		self.agent.entropy_history = []
+		self.agent.entropy_loss_history = []
+		self.agent.temperature_history = []
+
 		if self.train_model and i_episode >= self.start_training_on_episode:
 			if i_episode % self.agent.update_interval == 0:
 				start_training_time = rospy.get_time()
@@ -427,7 +431,7 @@ def game_loop(game):
 	if game.train_model:
 		rospy.loginfo('Training')
 		game.test() # test with random agent initial games first 10 games	
-		wait_for_keypress()
+		#wait_for_keypress()
 		#if game.lfd_participant_gameplay: # TO_DO This might need to be removed because we load the agent with the initial updates from the start
 		#game.initiale_offline_update() # the first offline for LfD if the participant is playing
 		for i_episode in range(1, game.max_episodes+1):
