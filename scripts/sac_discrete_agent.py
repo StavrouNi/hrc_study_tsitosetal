@@ -225,3 +225,8 @@ class DiscreteSACAgent:
             self.critic.save_checkpoint()
             self.target_critic.save_checkpoint()
 
+    def load_models(self):
+        print('.... loading models ....')
+        self.actor.load_checkpoint()
+        self.critic.load_checkpoint()
+        self.target_critic.load_checkpoint()

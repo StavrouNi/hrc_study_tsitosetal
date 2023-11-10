@@ -9,9 +9,9 @@ Game:
   #games_to_capture: #The games that the Demonstrations buffer wil keep from the gameplay with the expert
   train_model: True # True if no training happens
   load_model_training: False # True if loading model to continue training
-  load_model_training_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/rl_models/expert" # Location of the model 
+  load_model_training_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/rl_models/70K_every10_uniform_200ms_expert05entropy_LfD_TL_2" # Location of the model 
   load_model_transfer_learning: False # True if loading model for transfer_learning 
-  load_model_transfer_learning_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/rl_models/expert" # Location of the model for transfer learning 
+  load_model_transfer_learning_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/rl_models/70K_every10_uniform_200ms_expert05entropy_LfD_TL_2" # Location of the model for transfer learning 
   load_model_testing_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/rl_models/98K_every10_uniform_200ms_NIKOLAS_no_TL_13" # Location of the model for testing
   load_demonstrations_data_dir: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer/FINALL28.npy" #Location of the expert experience for the participants buffer will be stored
   initialized_agent: True
