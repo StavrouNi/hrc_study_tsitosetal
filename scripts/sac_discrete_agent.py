@@ -18,7 +18,7 @@ class DiscreteSACAgent:
         self.alpha = rospy.get_param('rl_control/SAC/alpha', 100)
         self.beta = rospy.get_param('rl_control/SAC/beta', 100)
         #self.target_entropy = rospy.get_param('rl_control/SAC/target_entropy_ratio', 100)
-        self.target_entropy_ratio= 0.5 ##########################################################this is what we change for the entropy
+        self.target_entropy_ratio= 0.4 ##########################################################this is what we change for the entropy
         self.update_interval = update_interval
         self.buffer_max_size = buffer_max_size
         self.scale = reward_scale
@@ -32,13 +32,23 @@ class DiscreteSACAgent:
         self.entropy_loss_history = []
         self.temperature_history = []
 
+        # Initialize history lists for q1, q2, policy loss, and actor loss
+        self.q1_history = []
+        self.q2_history = []
+        self.policy_loss_history = []
+        self.actor_loss_history = []  # If you plan to track a separate actor loss
+        # Initialize history lists for Q losses
+        self.q1_loss_history = []
+        self.q2_loss_history = []
+        self.policy_history = []
+
       
         self.actor = Actor(self.input_dims, self.n_actions, self.layer1_size, chkpt_dir=self.chkpt_dir).to(device)
         self.critic = Critic(self.input_dims, self.n_actions, self.layer1_size, chkpt_dir=self.chkpt_dir).to(device)
         # The above 3 lines are for the LfD participants gameplay to initialize the dual buffer
         self.demo_data = rospy.get_param("rl_control/Game/load_demonstrations_data_dir","opt/ros/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer.npy")
         self.lfd_participant_gameplay = rospy.get_param('rl_control/Game/lfd_participant_gameplay', False)
-        self.percentages =  [0.8, 0.6, 0.4, 0.2, 0.1]   # Because we give the first 
+        self.percentages =  [ 0.8, 0.6, 0.4, 0.2, 0.1]   # Because we give the first 
         self.target_critic = Critic(self.input_dims, self.n_actions, self.layer1_size, chkpt_dir=self.chkpt_dir).to(
             device)
 
@@ -59,7 +69,7 @@ class DiscreteSACAgent:
         self.target_entropy = np.log(3) * self.target_entropy_ratio
         #self.target_entropy = -np.log(1.0 / 2.0) * self.target_entropy_ratio
 
-        print(self.target_entropy)
+        #print(self.target_entropy)
 
         self.log_alpha = torch.zeros(1, requires_grad=True, device=device)
         self.alpha_optim = torch.optim.Adam([self.log_alpha], lr=self.lr, eps=1e-4)
@@ -92,7 +102,7 @@ class DiscreteSACAgent:
 
         weights = 1.  # default
         q1_loss, q2_loss, errors, mean_q1, mean_q2 = self.calc_critic_loss(batch_transitions, weights)
-        policy_loss, entropies = self.calc_policy_loss(batch_transitions, weights)
+        policy_loss,entropies,action_probs = self.calc_policy_loss(batch_transitions, weights)
         entropy_loss = self.calc_entropy_loss(entropies, weights)
 
         torch.nn.utils.clip_grad_norm_(self.critic.parameters(), 5)
@@ -104,13 +114,41 @@ class DiscreteSACAgent:
 
         # Save entropy and temperature values
         self.entropy_history.append(entropies.mean().item())
-        print("entropies", entropies.mean().item())
+        #print("entropies", entropies.mean().item())
 
         self.entropy_loss_history.append(entropy_loss.item())
-        print("entropy loss", entropy_loss.item())
+        #print("entropy loss", entropy_loss.item())
 
         self.temperature_history.append(self.log_alpha.exp().item())
-        print("temp", self.log_alpha.exp())
+        #print("temp", self.log_alpha.exp())
+        #print(mean_q1)
+        # Update history lists
+        print("Emean",entropies.mean().item())
+        print("q1mean",mean_q1)
+        print("q2mean",mean_q2)  
+        print("ploss",policy_loss.item())
+        print("q1loss",q1_loss.item())
+        print("q2loss",q2_loss.item())
+        print("entropyloss",entropy_loss.item())
+        print("loga",self.log_alpha.exp().item())
+        print("policy",action_probs.mean().item())
+
+
+        self.q1_history.append(mean_q1)  # Assuming mean_q1 is a tensor
+        self.q2_history.append(mean_q2)
+        self.policy_loss_history.append(policy_loss.item())
+        self.q1_loss_history.append(q1_loss.item())
+        self.q2_loss_history.append(q2_loss.item())
+        self.policy_history.append(action_probs.mean().item())
+        print("Length of actions prob history:", len(self.policy_history))
+        print("Length of temperature history:", len(self.temperature_history))
+        print("Length of entropy history:", len(self.entropy_history))
+        print("Length of entropy loss history:", len(self.entropy_loss_history))
+        print("Length of q1 history:", len(self.q1_history))
+        print("Length of q2 history:", len(self.q2_history))
+        print("Length of policy loss history:", len(self.policy_loss_history))
+        print("Length of q1 loss history:", len(self.q1_loss_history))
+        print("Length of q2 loss history:", len(self.q2_loss_history))
 
         
 
@@ -152,21 +190,28 @@ class DiscreteSACAgent:
 
     def calc_critic_loss(self, batch, weights):
         target_q = self.calc_target_q(*batch)
-
+        #print(target_q)
         # TD errors for updating priority weights
-        # errors = torch.abs(curr_q1.detach() - target_q)
+        #errors = torch.abs(curr_q1.detach() - target_q)
         errors = None
         mean_q1, mean_q2 = None, None
 
         # We log means of Q to monitor training.
-        # mean_q1 = curr_q1.detach().mean().item()
-        # mean_q2 = curr_q2.detach().mean().item()
+        #mean_q1 = curr_q1.detach().mean().item()
+        #mean_q2 = curr_q2.detach().mean().item()
 
         # Critic loss is mean squared TD errors with priority weights.
         # q1_loss = torch.mean((curr_q1 - target_q).pow(2) * weights)
         # q2_loss = torch.mean((curr_q2 - target_q).pow(2) * weights)
+
         curr_q1, curr_q2 = self.calc_current_q(*batch)
+        # We log means of Q to monitor training.
+        mean_q1 = curr_q1.detach().mean().item()
+        mean_q2 = curr_q2.detach().mean().item()
+        #print(curr_q1)
+        #print(target_q)
         q1_loss = F.mse_loss(curr_q1, target_q)
+        #print(q1_loss)
         q2_loss = F.mse_loss(curr_q2, target_q)
 
         return q1_loss, q2_loss, errors, mean_q1, mean_q2
@@ -200,7 +245,7 @@ class DiscreteSACAgent:
         # priority weights.
         policy_loss = (weights * (- q - alpha * entropies)).mean()  # avg over Batch
 
-        return policy_loss, entropies
+        return policy_loss, entropies, action_probs
 
     def calc_entropy_loss2(self, pi_s, log_pi_s):
         # Intuitively, we increse alpha when entropy is less than target

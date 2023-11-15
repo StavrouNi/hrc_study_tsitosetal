@@ -36,11 +36,11 @@ class RL_Control:
 					if self.lfd_participant_gameplay: #here we will give the initialized with the gu updates
 						lfd_initialized_agent_dir = rospy.get_param("/rl_control/Game/lfd_initialized_agent_dir","dir")
 						self.agent = get_SAC_agent(observation_space=[4], chkpt_dir = lfd_initialized_agent_dir)
-						rospy.logwarn("Initialized agent with GU")
+						rospy.logwarn("Successfully loaded model at {} for  LFD initialization".format(lfd_initialized_agent_dir))
 					else : #here is the simple initialized for no transfer or for expert
 						initialized_agent_dir = rospy.get_param("/rl_control/Game/initialized_agent_dir","dir")
 						self.agent = get_SAC_agent(observation_space=[4], chkpt_dir = initialized_agent_dir)
-						rospy.logwarn("Initialized agent without GU")
+						rospy.logwarn("Successfully loaded model at {} for initialization".format(initialized_agent_dir))
 				else:
 					self.agent = get_SAC_agent(observation_space=[4])
 					rospy.logwarn("User has not specified any model for training. Gonna initialize random agent")
@@ -120,7 +120,7 @@ class RL_Control:
 		self.test_travelled_distance = []
 		self.test_number_of_timesteps = []
 		self.test_state_info = [self.column_names] 
-		self.temp=[("temp","entropy","entropy loss")]
+		self.temp=[("temp","entropy","entropy_loss","q1_history","q2_history","q1_loss","q2_loss","policy_history","policy_loss")]
 
 		self.ur3_state_sub = rospy.Subscriber('ur3_cartesian_velocity_controller/ee_state', PoseTwist, self.ee_state_callback)
 		self.human_action_sub = rospy.Subscriber('cmd_vel', Twist, self.human_callback)
@@ -362,6 +362,13 @@ class RL_Control:
 		self.agent.entropy_history = []
 		self.agent.entropy_loss_history = []
 		self.agent.temperature_history = []
+		#self.temperature_history.append(self.log_alpha.exp().item())
+		self.agent.q1_history=[]
+		self.agent.q2_history=[]
+		self.agent.policy_loss_history=[]
+		self.agent.q1_loss_history=[]
+		self.agent.q2_loss_history=[]
+		self.agent.policy_history=[]
 
 		if self.train_model and i_episode >= self.start_training_on_episode:
 			if i_episode % self.agent.update_interval == 0:
@@ -373,8 +380,37 @@ class RL_Control:
 				if self.update_cycles > 0:
 					grad_updates_duration = self.grad_updates()
 					self.agent.save_models()
-					temperature=list(zip(self.agent.temperature_history,self.agent.entropy_history,self.agent.entropy_loss_history))
+					print(self.agent.temperature_history)
+					print(self.agent.entropy_history)
+					print(self.agent.entropy_loss_history)
+					print(self.agent.q1_history)
+					print(self.agent.q2_history)
+					print(self.agent.policy_loss_history)
+					print(self.agent.q1_loss_history)
+					print(self.agent.q2_loss_history)
+					print("Length of temperature history:", len(self.agent.temperature_history))
+					print("Length of entropy history:", len(self.agent.entropy_history))
+					print("Length of entropy loss history:", len(self.agent.entropy_loss_history))
+					print("Length of q1 history:", len(self.agent.q1_history))
+					print("Length of q2 history:", len(self.agent.q2_history))
+					print("Length of policy loss history:", len(self.agent.policy_loss_history))
+					print("Length of q1 loss history:", len(self.agent.q1_loss_history))
+					print("Length of q2 loss history:", len(self.agent.q2_loss_history))
+					temperature=list(zip(self.agent.temperature_history,
+						  self.agent.entropy_history,
+						  self.agent.entropy_loss_history,
+						  self.agent.q1_history,
+						  self.agent.q2_history,
+						  self.agent.q1_loss_history,
+						  self.agent.q2_loss_history,
+						  self.agent.policy_history,
+						  self.agent.policy_loss_history,))
+					#temperature=list(zip(self.agent.temperature_history,self.agent.entropy_history,self.agent.entropy_loss_history))
+					print(len(temperature))
+					print(len(self.temp))
 					self.temp.extend(temperature) 
+
+
 				remaining_wait_time = self.rest_period - (rospy.get_time() - start_training_time)
 				start_remaining_time = rospy.get_time()
 
