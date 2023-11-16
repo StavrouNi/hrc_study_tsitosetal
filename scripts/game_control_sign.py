@@ -120,7 +120,7 @@ class RL_Control:
 		self.test_travelled_distance = []
 		self.test_number_of_timesteps = []
 		self.test_state_info = [self.column_names] 
-		self.temp=[("temp","entropy","entropy_loss","q1_history","q2_history","q1_loss","q2_loss","policy_history","policy_loss")]
+		self.temp=[("temp","entropy","entropy_loss","q1_history","q2_history","q1_loss","q2_loss","target_q","policy_loss")]
 
 		self.ur3_state_sub = rospy.Subscriber('ur3_cartesian_velocity_controller/ee_state', PoseTwist, self.ee_state_callback)
 		self.human_action_sub = rospy.Subscriber('cmd_vel', Twist, self.human_callback)
@@ -368,7 +368,7 @@ class RL_Control:
 		self.agent.policy_loss_history=[]
 		self.agent.q1_loss_history=[]
 		self.agent.q2_loss_history=[]
-		self.agent.policy_history=[]
+		self.agent.targetqhistory=[]
 
 		if self.train_model and i_episode >= self.start_training_on_episode:
 			if i_episode % self.agent.update_interval == 0:
@@ -403,7 +403,7 @@ class RL_Control:
 						  self.agent.q2_history,
 						  self.agent.q1_loss_history,
 						  self.agent.q2_loss_history,
-						  self.agent.policy_history,
+						  self.agent.targetqhistory,
 						  self.agent.policy_loss_history,))
 					#temperature=list(zip(self.agent.temperature_history,self.agent.entropy_history,self.agent.entropy_loss_history))
 					print(len(temperature))

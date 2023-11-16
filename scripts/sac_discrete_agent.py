@@ -18,7 +18,7 @@ class DiscreteSACAgent:
         self.alpha = rospy.get_param('rl_control/SAC/alpha', 100)
         self.beta = rospy.get_param('rl_control/SAC/beta', 100)
         #self.target_entropy = rospy.get_param('rl_control/SAC/target_entropy_ratio', 100)
-        self.target_entropy_ratio= 0.4 ##########################################################this is what we change for the entropy
+        self.target_entropy_ratio= 0.75 ##########################################################this is what we change for the entropy
         self.update_interval = update_interval
         self.buffer_max_size = buffer_max_size
         self.scale = reward_scale
@@ -41,7 +41,7 @@ class DiscreteSACAgent:
         self.q1_loss_history = []
         self.q2_loss_history = []
         self.policy_history = []
-
+        self.targetqhistory=[]
       
         self.actor = Actor(self.input_dims, self.n_actions, self.layer1_size, chkpt_dir=self.chkpt_dir).to(device)
         self.critic = Critic(self.input_dims, self.n_actions, self.layer1_size, chkpt_dir=self.chkpt_dir).to(device)
@@ -101,9 +101,10 @@ class DiscreteSACAgent:
         batch_transitions = states, actions, rewards, states_, dones
 
         weights = 1.  # default
-        q1_loss, q2_loss, errors, mean_q1, mean_q2 = self.calc_critic_loss(batch_transitions, weights)
+        q1_loss, q2_loss, errors, mean_q1, mean_q2, targetq = self.calc_critic_loss(batch_transitions, weights)
         policy_loss,entropies,action_probs = self.calc_policy_loss(batch_transitions, weights)
         entropy_loss = self.calc_entropy_loss(entropies, weights)
+
 
         torch.nn.utils.clip_grad_norm_(self.critic.parameters(), 5)
         update_params(self.critic_q1_optim, q1_loss)
@@ -111,7 +112,6 @@ class DiscreteSACAgent:
         torch.nn.utils.clip_grad_norm_(self.actor.parameters(), 5)
         update_params(self.actor_optim, policy_loss)
         update_params(self.alpha_optim, entropy_loss)
-
         # Save entropy and temperature values
         self.entropy_history.append(entropies.mean().item())
         #print("entropies", entropies.mean().item())
@@ -131,7 +131,8 @@ class DiscreteSACAgent:
         print("q2loss",q2_loss.item())
         print("entropyloss",entropy_loss.item())
         print("loga",self.log_alpha.exp().item())
-        print("policy",action_probs.mean().item())
+        #print("policy",action_probs)
+        print("targetq",targetq.mean().item())
 
 
         self.q1_history.append(mean_q1)  # Assuming mean_q1 is a tensor
@@ -139,7 +140,9 @@ class DiscreteSACAgent:
         self.policy_loss_history.append(policy_loss.item())
         self.q1_loss_history.append(q1_loss.item())
         self.q2_loss_history.append(q2_loss.item())
-        self.policy_history.append(action_probs.mean().item())
+        #self.policy_history.append(action_probs.mean().item())
+        self.targetqhistory.append(targetq.mean().item() )
+        """
         print("Length of actions prob history:", len(self.policy_history))
         print("Length of temperature history:", len(self.temperature_history))
         print("Length of entropy history:", len(self.entropy_history))
@@ -149,9 +152,7 @@ class DiscreteSACAgent:
         print("Length of policy loss history:", len(self.policy_loss_history))
         print("Length of q1 loss history:", len(self.q1_loss_history))
         print("Length of q2 loss history:", len(self.q2_loss_history))
-
-        
-
+        """
         return mean_q1, mean_q2, entropies
 
     def update_target(self):
@@ -214,7 +215,7 @@ class DiscreteSACAgent:
         #print(q1_loss)
         q2_loss = F.mse_loss(curr_q2, target_q)
 
-        return q1_loss, q2_loss, errors, mean_q1, mean_q2
+        return q1_loss, q2_loss, errors, mean_q1, mean_q2,target_q
 
     def calc_policy_loss(self, batch, weights):
         states, actions, rewards, next_states, dones = batch
