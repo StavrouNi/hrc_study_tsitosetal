@@ -18,7 +18,7 @@ class DiscreteSACAgent:
         self.alpha = rospy.get_param('rl_control/SAC/alpha', 100)
         self.beta = rospy.get_param('rl_control/SAC/beta', 100)
         #self.target_entropy = rospy.get_param('rl_control/SAC/target_entropy_ratio', 100)
-        self.target_entropy_ratio= 0.75 ##########################################################this is what we change for the entropy
+        self.target_entropy_ratio= 0.5 ##########################################################this is what we change for the entropy
         self.update_interval = update_interval
         self.buffer_max_size = buffer_max_size
         self.scale = reward_scale
