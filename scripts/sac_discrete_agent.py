@@ -66,9 +66,8 @@ class DiscreteSACAgent:
         # target -> maximum entropy (same prob for each action)
         # - log ( 1 / A) = log A
         # self.target_entropy = -np.log(1.0 / action_dim) * self.target_entropy_ratio
-        self.target_entropy = np.log(3) * self.target_entropy_ratio
-        #self.target_entropy = -np.log(1.0 / 2.0) * self.target_entropy_ratio
-
+        #############################################self.target_entropy = np.log(3) * self.target_entropy_ratio
+        self.target_entropy = 0.4
         #print(self.target_entropy)
 
         self.log_alpha = torch.zeros(1, requires_grad=True, device=device)
