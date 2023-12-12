@@ -1,14 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-
-
 # Load data for multiple participants # for the first 3 plots WINS REWARDS TRAVELLED DISTANCE we can have more than 1 filepath 
 TL_test_filepaths = [
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_IXR_LfD_TL_1/data/test_data.csv',
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_TXM_LfD_TL_2/data/test_data.csv',
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_GXL_LfD_TL_1/data/test_data.csv',
-    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_IXEXN_LfD_TL_1/data/test_data.csv',
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_MXS_LfD_TL_2/data/test_data.csv',
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_XXK_LfD_TL_1/data/test_data.csv',
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_KXP_LfD_TL_1/data/test_data.csv',
@@ -19,7 +16,6 @@ TL_train_filepaths = [
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_IXR_LfD_TL_1/data/data.csv',
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_TXM_LfD_TL_2/data/data.csv',
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_GXL_LfD_TL_1/data/data.csv',
-    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_IXEXN_LfD_TL_1/data/data.csv',
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_MXS_LfD_TL_2/data/data.csv',
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_XXK_LfD_TL_1/data/data.csv',
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_KXP_LfD_TL_1/data/data.csv',
@@ -49,15 +45,15 @@ No_TL_train_filepaths = [
 ]
 
 TL_steps_test_filepaths = [
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_IXR_LfD_TL_1/data/rl_test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_TXM_LfD_TL_2/data/rl_test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_GXL_LfD_TL_1/data/rl_test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_IXEXN_LfD_TL_1/data/rl_test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_MXS_LfD_TL_2/data/rl_test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_XXK_LfD_TL_1/data/rl_test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_IXR_LfD_TL_1/data/rl_test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_TXM_LfD_TL_2/data/rl_test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_GXL_LfD_TL_1/data/rl_test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_IXEXN_LfD_TL_1/data/rl_test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_MXS_LfD_TL_2/data/rl_test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_XXK_LfD_TL_1/data/rl_test_data.csv',
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_KXP_LfD_TL_1/data/rl_test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_SXT_LfD_TL_1/data/rl_test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_PXG_LfD_TL_1/data/rl_test_data.csv'
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_SXT_LfD_TL_1/data/rl_test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_PXG_LfD_TL_1/data/rl_test_data.csv'
 ]
 TL_steps_train_filepaths = [
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_IXR_LfD_TL_1/data/rl_data.csv',
@@ -72,13 +68,13 @@ TL_steps_train_filepaths = [
 ]
 No_TL_steps_test_filepaths = [
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_KXI_no_TL_1/data/rl_test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_DXM_no_TL_1/data/rl_test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_VXC_no_TL_2/data/rl_test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_TXS_no_TL_1/data/rl_test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_FXS_no_TL_1/data/rl_test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_DXT_no_TL_1/data/rl_test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_AXAXG_no_TL_1/data/rl_test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_AXG_no_TL_1/data/rl_test_data.csv'
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_DXM_no_TL_1/data/rl_test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_VXC_no_TL_2/data/rl_test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_TXS_no_TL_1/data/rl_test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_FXS_no_TL_1/data/rl_test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_DXT_no_TL_1/data/rl_test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_AXAXG_no_TL_1/data/rl_test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_AXG_no_TL_1/data/rl_test_data.csv'
 ]
 No_TL_steps_train_filepaths = [
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_KXI_no_TL_1/data/rl_data.csv',
@@ -91,50 +87,62 @@ No_TL_steps_train_filepaths = [
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_AXG_no_TL_1/data/rl_data.csv'
 ]
 experts_test_filepaths = [
-    ##'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_EXPERT80ep_LfD_TL_1/data/test_data.csv',
-    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert04entropy_LfD_TL_1/data/test_data.csv',
-    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/20K_every10_uniform_200ms_expert0.75we4000_LfD_TL_1/data/test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expertdimitrisentropy_LfD_TL_4/data/test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_EXPERT80ep_LfD_TL_1/data/test_data.csv',
     '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert05entropygood_LfD_TL_2/data/test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.75we_LfD_TL_1/data/test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.98we_LfD_TL_1/data/test_data.csv'
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert01ntropy_LfD_TL_2/data/test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert01ntropy_LfD_TL_1/data/test_data.csv'
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/ExpertStavrouFinal/data/test_data.csv'
+
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert04entropy_LfD_TL_1/data/test_data.csv',
+    
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert06entropy_LfD_TL_2/data/test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/20K_every10_uniform_200ms_expert0.75we4000_LfD_TL_1/data/test_data.csv',
+    ##'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.75we_LfD_TL_1/data/test_data.csv',
+    ####'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.98we_LfD_TL_1/data/test_data.csv'
 
 
 ]
 experts_train_filepaths = [
-    ##'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_EXPERT80ep_LfD_TL_1/data/data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert05entropygood_LfD_TL_2/data/data.csv',
-    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/ExpertStavrouFinal/data/data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expertdimitrisentropy_LfD_TL_4/data/data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_EXPERT80ep_LfD_TL_1/data/data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert05entropygood_LfD_TL_2/data/data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert01ntropy_LfD_TL_2/data/data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert01ntropy_LfD_TL_1/data/data.csv'
+    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/ExpertStavrouFinal/data/data.csv'
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert04entropy_LfD_TL_1/data/data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert06entropy_LfD_TL_2/data/data.csv',
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/20K_every10_uniform_200ms_expert0.75we4000_LfD_TL_1/data/data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.75we_LfD_TL_1/data/data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.98we_LfD_TL_1/data/data.csv'
+    ##'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.75we_LfD_TL_1/data/data.csv',
+    ##'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.98we_LfD_TL_1/data/data.csv'
 ]
 experts_steps_test_filepaths = [
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expertdimitrisentropy_LfD_TL_4/data/rl_test_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expertdimitrisentropy_LfD_TL_4/data/rl_test_data.csv',
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_EXPERT80ep_LfD_TL_1/data/rl_test_data.csv',
-    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert05entropy_LfD_TL_2/data/rl_test_data.csv',
+    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert05entropygood_LfD_TL_2/data/rl_test_data.csv'
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert01ntropy_LfD_TL_2/data/rl_test_data.csv',
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert01ntropy_LfD_TL_1/data/rl_test_data.csv',
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert04entropy_LfD_TL_1/data/rl_test_data.csv',
+    ####'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/ExpertStavrouFinal/data/rl_data.csv'
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert06entropy_LfD_TL_2/data/rl_test_data.csv',
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/20K_every10_uniform_200ms_expert0.75we4000_LfD_TL_1/data/rl_test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.75we_LfD_TL_1/data/rl_test_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.98we_LfD_TL_1/data/rl_test_data.csv'
+    ##'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.75we_LfD_TL_1/data/rl_test_data.csv',
+    ####'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.98we_LfD_TL_1/data/rl_test_data.csv'
 
 
 ]
 experts_steps_train_filepaths = [
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expertdimitrisentropy_LfD_TL_4/data/rl_data.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expertdimitrisentropy_LfD_TL_4/data/rl_data.csv',
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_EXPERT80ep_LfD_TL_1/data/rl_data.csv',
-    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert05entropy_LfD_TL_2/data/rl_data.csv',
+    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert05entropygood_LfD_TL_2/data/rl_data.csv'
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert01ntropy_LfD_TL_2/data/rl_data.csv',
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert01ntropy_LfD_TL_1/data/rl_data.csv',
-    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/ExpertStavrouFinal/data/rl_data.csv',
+    ###'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/initialized_agents/ExpertStavrouFinal/data/rl_data.csv'
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert04entropy_LfD_TL_1/data/rl_data.csv',
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert06entropy_LfD_TL_2/data/rl_data.csv',
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/20K_every10_uniform_200ms_expert0.75we4000_LfD_TL_1/data/rl_data.csv'
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.75we_LfD_TL_1/data/rl_data.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.98we_LfD_TL_1/data/rl_data.csv',
+    ##'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.75we_LfD_TL_1/data/rl_data.csv',
+    ##'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.98we_LfD_TL_1/data/rl_data.csv',
 
 ]
 experts_entropy_filepaths = [
@@ -143,11 +151,11 @@ experts_entropy_filepaths = [
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert05entropy_LfD_TL_2/data/entropy.csv',
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert01ntropy_LfD_TL_2/data/entropy.csv',
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert01ntropy_LfD_TL_1/data/entropy.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert04entropy_LfD_TL_1/data/entropy.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert04entropy_LfD_TL_1/data/entropy.csv',
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/20K_every10_uniform_200ms_expert0.75we4000_LfD_TL_1/data/entropy.csv'
     #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert06entropy_LfD_TL_2/data/entropy.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.75we_LfD_TL_1/data/entropy.csv',
-    '/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.98we_LfD_TL_1/data/entropy.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.75we_LfD_TL_1/data/entropy.csv',
+    #'/home/nick/catkin_ws/src/hrc_study_tsitosetal/games_info/70K_every10_uniform_200ms_expert0.98we_LfD_TL_1/data/entropy.csv',
 ]
 TL_test_data=[]
 TL_train_data=[]
@@ -231,8 +239,9 @@ def calculate_stats(metrics_list):
     min_blocks = min(len(metrics) for metrics in metrics_list)
     truncated_metrics = [metrics[:min_blocks] for metrics in metrics_list]
     mean_metrics = np.mean(truncated_metrics, axis=0)
-    std_dev_metrics = np.std(truncated_metrics, axis=0, ddof=1)
+    std_dev_metrics = np.std(truncated_metrics, axis=0, ddof=0)  # Set ddof to 0
     return mean_metrics, std_dev_metrics
+
 
 def plot_metrics(metrics_list, title, label, y_label):
     mean_metrics, std_dev_metrics = calculate_stats(metrics_list)
@@ -255,220 +264,172 @@ TL_train_distance = calculate_mean_normalized_distances(TL_train_data)
 NO_TL_test_distance = calculate_mean_normalized_distances(NO_TL_test_data)
 NO_TL_train_distance = calculate_mean_normalized_distances(NO_TL_train_data)
 # Plotting Wins, Rewards, and Traveled Distances for each group
-"""
-#######################################################################FOR ONE BY ONE SEPPERATLY#################################
-# Wins
 
-for group, data, title in [('TL Test', TL_test_wins, 'TL Test Group'), 
-                           ('TL Train', TL_train_wins, 'TL Train Group'), 
-                           ('No TL Test', NO_TL_test_wins, 'No TL Test Group'), 
-                           ('No TL Train', NO_TL_train_wins, 'No TL Train Group')]:
-    plt.figure(figsize=(12, 6))
-    plot_metrics(data, f'Mean and Std Dev Wins per Block in {title}', group, 'Mean Wins')
-    #plt.show()
+# Calculate wins and rewards for the expert data
+expert_wins_test, expert_rewards_test = calculate_wins(expert_test_data)
+expert_wins_train, expert_rewards_train = calculate_wins(expert_train_data)
 
-# Rewards
-for group, data, title in [('TL Test', TL_test_rewards, 'TL Test Group'), 
-                           ('TL Train', TL_train_rewards, 'TL Train Group'), 
-                           ('No TL Test', NO_TL_test_rewards, 'No TL Test Group'), 
-                           ('No TL Train', NO_TL_train_rewards, 'No TL Train Group')]:
-    plt.figure(figsize=(12, 6))
-    plot_metrics(data, f'Mean and Std Dev Rewards per Block in {title}', group, 'Mean Rewards')
-    #plt.show()
+# Calculate distances for the expert data
+expert_distance_test = calculate_mean_normalized_distances(expert_test_data)
+expert_distance_train = calculate_mean_normalized_distances(expert_train_data)
 
-# Traveled Distance
-for group, data, title in [('TL Test', TL_test_distance, 'TL Test Group'), 
-                           ('TL Train', TL_train_distance, 'TL Train Group'), 
-                           ('No TL Test', NO_TL_test_distance, 'No TL Test Group'), 
-                           ('No TL Train', NO_TL_train_distance, 'No TL Train Group')]:
-    plt.figure(figsize=(12, 6))
-    plot_metrics(data, f'Mean and Std Dev Traveled Distance per Block in {title}', group, 'Mean Traveled Distance')
-    #plt.show()
-
-
-# ... (Other functions: calculate_wins, calculate_mean_normalized_distances, calculate_stats remain unchanged)
-"""
-def plot_combined_metrics(tl_data, no_tl_data, title, label1, label2, y_label):
+def plot_combined_metrics(tl_data, no_tl_data, expert_data, title, label1, label2, label3, y_label):
     mean_tl, std_dev_tl = calculate_stats(tl_data)
     mean_no_tl, std_dev_no_tl = calculate_stats(no_tl_data)
 
+    if expert_data:  # Check if expert data is provided
+        mean_expert, std_dev_expert = calculate_stats(expert_data)
+        blocks = np.arange(1, len(mean_expert) + 1)
+        plt.errorbar(blocks, mean_expert, yerr=std_dev_expert, fmt='o-', label=label3)
+    print(mean_tl)
+    print(mean_no_tl)
+    print(mean_expert)
+
     blocks = np.arange(1, len(mean_tl) + 1)
-    
     plt.errorbar(blocks, mean_tl, yerr=std_dev_tl, fmt='o-', label=label1)
     plt.errorbar(blocks, mean_no_tl, yerr=std_dev_no_tl, fmt='o-', label=label2)
     
     plt.xlabel('Block Number')
     plt.ylabel(y_label)
     plt.title(title)
-    plt.legend()
+    
+    # Move the legend outside the figure to the right
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    
+    # Modify the x-axis tick labels
+    plt.xticks(blocks, ['Baseline'] + list(blocks[1:]))  # Replace the first label with 'Baseline'
+    
     plt.grid(True)
-"""
-# Assuming you have calculated the wins, rewards, and distances for both TL and No TL test groups
+
+# Assuming you have calculated the expert wins, rewards, and distances for both test and train data
 ######################################################################BOTH GROUPS PLOTS###############################
-# Plotting Combined Wins for TL and No TL Test Groups
+# Plotting Combined Wins for TL, No TL, and Expert Test Groups
+print(expert_wins_test)
 plt.figure(figsize=(12, 6))
-plot_combined_metrics(TL_test_wins, NO_TL_test_wins, 'Mean and Std Dev Wins per Block for Test Groups', 'TL Test Wins', 'No TL Test Wins', 'Mean Wins')
+plot_combined_metrics(TL_train_wins, NO_TL_train_wins, expert_wins_train, 'Wins per Test Block ', 'TL', 'No TL', 'Expert ', 'Wins')
 #plt.show()
 
-# Plotting Combined Rewards for TL and No TL Test Groups
+# Plotting Combined Rewards for TL, No TL, and Expert Test Groups
 plt.figure(figsize=(12, 6))
-plot_combined_metrics(TL_test_rewards, NO_TL_test_rewards, 'Mean and Std Dev Rewards per Block for Test Groups', 'TL Test Rewards', 'No TL Test Rewards', 'Mean Rewards')
+plot_combined_metrics(TL_test_rewards, NO_TL_test_rewards, expert_rewards_test, 'Rewards per Test Block ', 'TL', 'No TL', 'Expert ', 'Rewards')
 #plt.show()
 
-# Plotting Combined Normalized Traveled Distance for TL and No TL Test Groups
+# Plotting Combined Normalized Traveled Distance for TL, No TL, and Expert Test Groups
 plt.figure(figsize=(12, 6))
-plot_combined_metrics(TL_test_distance, NO_TL_test_distance, 'Mean and Std Dev Traveled Distance per Block for Test Groups', 'TL Test Distance', 'No TL Test Distance', 'Mean Traveled Distance')
+plot_combined_metrics(TL_test_distance, NO_TL_test_distance, expert_distance_test, 'Normalized Travelled Distance per Test Block ', 'TL', 'No TL', 'Expert ', 'Normalized Travelled Distance ')
 #plt.show()
+
+######################################TIME########################
+"""
+def calculate_group_total_time(data_group):
+    group_total_time = []
+    for participant_data in data_group:
+        total_time_per_participant = np.sum(participant_data[:, 1])
+        group_total_time.append(total_time_per_participant)
+    return group_total_time
+
+# Calculate group mean total time and standard deviation for each group in seconds
+mean_TL_test_total_time_secs = np.mean(calculate_group_total_time(TL_test_data))
+std_TL_test_total_time_secs = np.std(calculate_group_total_time(TL_test_data), ddof=0)  # Set ddof to 0 for population std deviation
+mean_NO_TL_test_total_time_secs = np.mean(calculate_group_total_time(NO_TL_test_data))
+std_NO_TL_test_total_time_secs = np.std(calculate_group_total_time(NO_TL_test_data), ddof=0)
+
+mean_TL_train_total_time_secs = np.mean(calculate_group_total_time(TL_train_data))
+std_TL_train_total_time_secs = np.std(calculate_group_total_time(TL_train_data), ddof=0)
+mean_NO_TL_train_total_time_secs = np.mean(calculate_group_total_time(NO_TL_train_data))
+std_NO_TL_train_total_time_secs = np.std(calculate_group_total_time(NO_TL_train_data), ddof=0)
+
+# Convert mean and std to minutes
+mean_TL_test_total_time_mins = mean_TL_test_total_time_secs / 60
+std_TL_test_total_time_mins = std_TL_test_total_time_secs / 60
+mean_NO_TL_test_total_time_mins = mean_NO_TL_test_total_time_secs / 60
+std_NO_TL_test_total_time_mins = std_NO_TL_test_total_time_secs / 60
+
+mean_TL_train_total_time_mins = mean_TL_train_total_time_secs / 60
+std_TL_train_total_time_mins = std_TL_train_total_time_secs / 60
+mean_NO_TL_train_total_time_mins = mean_NO_TL_train_total_time_secs / 60
+std_NO_TL_train_total_time_mins = std_NO_TL_train_total_time_secs / 60
+
+# Print the calculated group means and standard deviations in minutes
+print("TL Test Mean Total Time (mins):", mean_TL_test_total_time_mins)
+print("TL Test Std Total Time (mins):", std_TL_test_total_time_mins)
+print("NO TL Test Mean Total Time (mins):", mean_NO_TL_test_total_time_mins)
+print("NO TL Test Std Total Time (mins):", std_NO_TL_test_total_time_mins)
+
+print("TL Train Mean Total Time (mins):", mean_TL_train_total_time_mins)
+print("TL Train Std Total Time (mins):", std_TL_train_total_time_mins)
+print("NO TL Train Mean Total Time (mins):", mean_NO_TL_train_total_time_mins)
+print("NO TL Train Std Total Time (mins):", std_NO_TL_train_total_time_mins)
 
 """
-# Calculate wins and rewards for training data
-expert_wins_train, expert_rewards_train = calculate_wins(expert_train_data)
-expert_wins_test, expert_rewards_test = calculate_wins(expert_test_data)
-
-# Calculate distances for training data
-expert_distance_train = calculate_mean_normalized_distances(expert_train_data)
-expert_distance_test = calculate_mean_normalized_distances(expert_test_data)
-
-##########################################################EXPERTS TEST###########################
-
-
-import matplotlib.pyplot as plt
-
-# Data
-experts = ['Expert 1:0.4*E', 'Expert2:0.75*E', 'Expert3:0.98*E']
-
-# Assuming expert_wins_test, expert_rewards_test, and expert_distance_test are defined
-# Assuming each list has the same number of blocks
-
-# Function to set x-ticks with the first block labeled as 'Baseline'
-def set_xticks(ax):
-    blocks = len(expert_wins_test[0])  # Assuming all lists have the same length
-    labels = ['Baseline'] + [f'Block {i}' for i in range(1, blocks)]
-    ax.set_xticks(range(blocks))
-    ax.set_xticklabels(labels)
-
-# Plot for Wins
-plt.figure(figsize=(10, 5))
-plt.title('Wins')
-plt.xlabel('Block')
-plt.ylabel('Wins')
-for i, expert in enumerate(experts):
-    plt.plot(expert_wins_test[i], label=expert)
-plt.legend()
-set_xticks(plt.gca())  # Set x-ticks for the current plot
-#plt.show()
-
-# Plot for Rewards
-plt.figure(figsize=(10, 5))
-plt.title('Rewards')
-plt.xlabel('Block')
-plt.ylabel('Reward')
-for i, expert in enumerate(experts):
-    plt.plot(expert_rewards_test[i], label=expert)
-plt.legend()
-set_xticks(plt.gca())  # Set x-ticks for the current plot
-#plt.show()
-
-# Plot for Traveled Distance (Training Data)
-plt.figure(figsize=(10, 5))
-plt.title('Normalized Traveled Distance ')
-plt.xlabel('Block')
-plt.ylabel('Distance')
-for i, expert in enumerate(experts):
-    plt.plot(expert_distance_test[i], label=expert)
-plt.legend()
-set_xticks(plt.gca())  # Set x-ticks for the current plot
-#plt.show()
-
-##########################################################EXPERTS TRAIN###########################
-fig, axs = plt.subplots(3, figsize=(10, 15))
-
-# Plot wins
-axs[0].set_title('Wins')
-axs[0].set_xlabel('Block')
-axs[0].set_ylabel('Wins')
-for i, expert in enumerate(experts):
-    axs[0].plot(expert_wins_train[i], label=expert)
-
-# Plot rewards
-axs[1].set_title('Rewards')
-axs[1].set_xlabel('Block')
-axs[1].set_ylabel('Reward')
-for i, expert in enumerate(experts):
-    axs[1].plot(expert_rewards_train[i], label=expert)
-
-# Plot distances for training data
-axs[2].set_title('Traveled Distance (Training Data)')
-axs[2].set_xlabel('Block')
-axs[2].set_ylabel('Distance')
-for i, expert in enumerate(experts):
-    axs[2].plot(expert_distance_train[i], label=expert)
-
-# Add legends
-for ax in axs:
-    ax.legend()
-
-# Show the plots
-plt.tight_layout()
-########################################################################################
-
-#####################################FOR ONE EXPERT##############################
-
+###########################COMBINED######################
 """
-combined_wins = np.empty((0,))
-combined_rewards = np.empty((0,))
-combined_distance = np.empty((0,))
+def plot_combined_bar_and_print_means(metrics_test, metrics_train, title, ylabel):
+    # Ensure the number of batches (5 batches in this case)
+    num_batches = 5
 
-# Combine test and train blocks alternately
-for i in range(len(expert_wins_train[0])):
-    combined_wins = np.concatenate((combined_wins, [expert_wins_test[0][i], expert_wins_train[0][i]]))
-    combined_rewards = np.concatenate((combined_rewards, [expert_rewards_test[0][i], expert_rewards_train[0][i]]))
-    combined_distance = np.concatenate((combined_distance, [expert_distance_test[0][i], expert_distance_train[0][i]]))
+    # Initialize lists for mean metrics and standard deviations
+    mean_metrics = []
+    std_metrics = []
 
-# Add the last test block
-for i in range(len(expert_wins_train[1]), len(expert_wins_test[0])):
-    combined_wins = np.concatenate((combined_wins, [expert_wins_test[0][i]]))
-    combined_rewards = np.concatenate((combined_rewards, [expert_rewards_test[0][i]]))
-    combined_distance = np.concatenate((combined_distance, [expert_distance_test[0][i]]))
+    # Initialize a list to store the mean for each block for each participant
+    participant_means = []
 
+    # Extract the first test block for Baseline and calculate its mean and std
+    baseline_test_block = [participant[0] for participant in metrics_test]
+    mean_metrics.append(np.mean(baseline_test_block))
+    std_metrics.append(np.std(baseline_test_block, ddof=1))
+    participant_means.append(baseline_test_block)
 
-fig, axs = plt.subplots(3, figsize=(10, 15))
+    # Add pairs of train and test blocks for each batch
+    for i in range(num_batches):
+        # Add training block if available
+        if i < len(metrics_train):
+            train_block = [participant[i] for participant in metrics_train]
+            mean_metrics.append(np.mean(train_block))
+            std_metrics.append(np.std(train_block, ddof=1))
+            participant_means.append(train_block)
+        # Add subsequent test block if available
+        if i < len(metrics_test) - 1:
+            test_block = [participant[i + 1] for participant in metrics_test]
+            mean_metrics.append(np.mean(test_block))
+            std_metrics.append(np.std(test_block, ddof=1))
+            participant_means.append(test_block)
 
-# Create x values with incremental numbers
-x_values = np.arange(len(combined_wins))
+    # Print the mean for each block for each participant
+    for participant_id, means in enumerate(zip(*participant_means)):
+        print(f"Participant {participant_id + 1}: {means}")
 
-# Plot wins
-axs[0].set_title('Wins')
-axs[0].set_xlabel('Game')
-axs[0].set_ylabel('Wins')
-axs[0].plot(x_values, combined_wins, label=f'Expert 3 Continuous')
+    # Creating the bar plot
+    plt.figure(figsize=(12, 6))
+    x = np.arange(len(mean_metrics))  # the label locations
+    plt.bar(x, mean_metrics, yerr=std_metrics, capsize=5)
+    plt.xlabel('Blocks/Games')
+    plt.ylabel(ylabel)
+    plt.title(title)
 
-# Plot rewards
-axs[1].set_title('Rewards')
-axs[1].set_xlabel('Game')
-axs[1].set_ylabel('Reward')
-axs[1].plot(x_values, combined_rewards, label=f' Expert 3 Continuous')
+    # Generate labels
+    labels = ['Baseline']
+    for i in range(1, len(mean_metrics)):
+        labels.append(f'Train{i}' if i % 2 == 1 else f'Test{i//2 + 1}')
 
-# Plot distances
-axs[2].set_title('Traveled Distance')
-axs[2].set_xlabel('Game')
-axs[2].set_ylabel('Distance')
-axs[2].plot(x_values, combined_distance, label=f'Expert 3 Continuous')
+    plt.xticks(x, labels, rotation=45)  # Set x-ticks with the generated labels
 
-# Set x-ticks to be explicit integers starting from 0 to 10
-axs[0].set_xticks(x_values)
-axs[1].set_xticks(x_values)
-axs[2].set_xticks(x_values)
-# Add legends
-for ax in axs:
-    ax.legend()
+    plt.grid(True)
+    #plt.show()
 
-# Show the plots
-plt.tight_layout()
+# Example usage
+plot_combined_bar_and_print_means(TL_test_distance, TL_train_distance, 'TL Group Travelled Distance', 'Distance')
+plot_combined_bar_and_print_means(NO_TL_test_distance, NO_TL_train_distance, 'No TL Group Travelled Distance', 'Distance')
+
 plt.show()
+
 """
-"""
-def plot_heatmap_with_coverage(batch_number, filepaths, steps_filepaths, games_per_batch=10, threshold=0, max_x=-0.18, min_x=-0.349, max_y=0.330, min_y=0.170):
+#############HEATMAPS##################
+
+from scipy.ndimage import gaussian_filter
+
+def plot_heatmap_with_coverage(batch_number, filepaths, steps_filepaths, games_per_batch=10, threshold=0, max_x=-0.18, min_x=-0.349, max_y=0.330, min_y=0.170, smoothing_sigma=0.3, ax=None):
     all_x_coords = []
     all_y_coords = []
 
@@ -499,124 +460,81 @@ def plot_heatmap_with_coverage(batch_number, filepaths, steps_filepaths, games_p
         x_coords, y_coords = get_batch_data(batch_number, test_data, rl_data, games_per_batch)
         all_x_coords.extend(x_coords)
         all_y_coords.extend(y_coords)
-    print(len(all_x_coords))
     # Create a 2D histogram for the heatmap
 
     heatmap, xedges, yedges = np.histogram2d(all_x_coords, all_y_coords, bins=[np.linspace(min_x, max_x, 20), np.linspace(min_y, max_y, 20)])
-    #print(all_x_coords)
     total_bins = np.prod(heatmap.shape)
     filled_bins = np.nansum(heatmap > 0)
     coverage = filled_bins / total_bins
-    
-    # Plotting the heatmap
-    plt.figure(figsize=(8, 6), facecolor='white')
-    with sns.axes_style("white"):  # Use the provided style
-        plt.imshow(heatmap.T, extent=[xedges[0], xedges[-1], yedges[0], yedges[-1]], origin='lower', cmap='YlGn', aspect='auto')
-    
-    plt.colorbar(label='Counts')
-    plt.title(f"Heatmap of Positions in Batch {batch_number} with Threshold {threshold}")
-    plt.xlabel('X Position')
-    plt.ylabel('Y Position')
-    #plt.gca().set_facecolor('black')
+    heatmap_normalized = heatmap / np.max(heatmap)
+
+    # Apply Gaussian smoothing to the heatmap
+    #smoothed_heatmap = gaussian_filter(heatmap, smoothing_sigma)
+    smoothed_heatmap = gaussian_filter(heatmap_normalized, smoothing_sigma)
+
+    # Plotting the smoothed heatmap
+    if ax is None:
+        plt.figure(figsize=(8, 6), facecolor='white')
+    im=ax.imshow(smoothed_heatmap.T, extent=[xedges[0], xedges[-1], yedges[0], yedges[-1]], origin='lower', cmap='YlGn', aspect='auto')
+    cbar = plt.colorbar(im, ax=ax)
+    #cbar.set_label('Counts')
+    if ax is None:
+        plt.colorbar(label='Counts')
+        plt.title(f"Smoothed Heatmap of Positions in Batch {batch_number} with Threshold {threshold}")
+        plt.xlabel('X Position')
+        plt.ylabel('Y Position')
+        #plt.gca().set_facecolor('black')
 
     print(f"Coverage for Batch {batch_number}: {coverage:.2%}")
 
     return coverage  # Optionally return the coverage value
 
-print(expert_test_data[0])
-print(len(expert_train_data))
-#plot_heatmap_with_coverage(4 ,expert_train_data, expert_steps_train_data,threshold=0)
+num_rows = 3
+num_cols = 3
 
-plot_heatmap_with_coverage(5,expert_test_data, expert_steps_test_data,threshold=0)
-"""
-####################################################ENTROPIE AND NN LOSSES#####################################
+# Batches to collect (0, 3, 5 for Experts, TL, and No TL)
+batches_to_collect = [0, 3, 5]
 
-import matplotlib.pyplot as plt
-import numpy as np
+# Create a figure with the desired size
+fig = plt.figure(figsize=(12, 12))
 
-# Assuming expert_entropy_data is a list of arrays loaded from your CSV files
-expert_names = ["Expert 0.4*E", "Expert 0.75*E", "Expert 0.98*E"]
-
-# Plot q1, q1 loss, and q target (or alternative if q target is not available) for each expert with transparency
-for i, expert_data in enumerate(expert_entropy_data):
-    q1 = expert_data[:, 3]
-    q1_loss = expert_data[:, 5]
-    q_target = expert_data[:, 7]
-
-    plt.figure(figsize=(10, 5))
-    plt.plot(q1, label='Q1', alpha=0.3, color="blue")  # Adjust alpha here
-    plt.plot(q1_loss, label='Q1 Loss', alpha=0.3, color='red')
+# Titles for the subplots
+# Titles for the subplots
 
 
-    if i == 0:
-        # Create random noise, with a small magnitude
-        noise = np.random.normal(0, 0.5, size=q1.shape)
-        q_target_substitute = q1 + noise
-        plt.plot(q_target_substitute, label='Q Target', alpha=0.3, color='orange')        
-    else:
-        plt.plot(q_target, label='Q Target', alpha=0.3, color='orange')
+# Create a list of labels for rows and columns
+row_labels = ["0.4*E Expert", "TL", "No TL"]
+col_labels = ["Baseline", "Block 3", "Block 6"]
 
+# Iterate through rows and columns to create subplots
+for row in range(num_rows):
+    for col in range(num_cols):
+        subplot_idx = row * num_cols + col + 1
+        ax = fig.add_subplot(num_rows, num_cols, subplot_idx)
 
-            # Determine the maximum x value for your plot
-    max_x_value = len(q1)  # Assuming temperature array defines the time steps
+        # Determine the group based on the row (0 for Experts, 1 for TL, 2 for No TL)
+        group_idx = row
 
-    # Add vertical lines every 14000 time steps
-    for x in range(0, max_x_value, 14000):
-        plt.axvline(x=x, color='grey', linestyle='--', alpha=0.5)
-    plt.title(f"{expert_names[i]} - Q1, Q1 Loss, Q Target")
-    plt.ylabel('Values')
-    plt.xlabel('Time Steps')
-    plt.legend()
-    plt.tight_layout()
+        # Get the batch number based on the column
+        batch_number = batches_to_collect[col]
 
-# Show all plots
-#plt.show()
+        # Construct a title based on the labels and batch number
+        title = f"{row_labels[group_idx]} - {col_labels[col]}"
 
+        if group_idx == 0:
+            # Expert
+            plot_heatmap_with_coverage(batch_number, expert_test_data, expert_steps_test_data, ax=ax)
+        elif group_idx == 1:
+            # TL Participant
+            plot_heatmap_with_coverage(batch_number, TL_test_data, TL_steps_test_data, ax=ax)
+        elif group_idx == 2:
+            # No TL Participant
+            plot_heatmap_with_coverage(batch_number, NO_TL_test_data, NO_TL_steps_test_data, ax=ax)
 
-# Plot policy loss for each expert
-for i, expert_data in enumerate(expert_entropy_data):
-    policy_loss = expert_data[:, -1]
+        ax.set_title(title)
 
-    plt.figure(figsize=(10, 5))
-    plt.plot(-policy_loss, label='Policy Loss')
+# Adjust the layout
+plt.tight_layout()
 
-            # Determine the maximum x value for your plot
-    max_x_value = len(policy_loss)  # Assuming temperature array defines the time steps
-
-    # Add vertical lines every 14000 time steps
-    for x in range(0, max_x_value, 14000):
-        plt.axvline(x=x, color='grey', linestyle='--', alpha=0.5)
-    plt.title(f"{expert_names[i]} - Policy Loss")
-    plt.ylabel('Policy Loss')
-    plt.xlabel('Time Steps')
-    plt.legend()
-    plt.tight_layout()
-
-# Show all plots
-#plt.show()
-
-# Plot q1, q1 loss, and q target (or alternative if q target is not available) for each expert with transparency
-for i, expert_data in enumerate(expert_entropy_data):
-    temperature = expert_data[:, 0]
-    entropy_loss = expert_data[:, 1]
-    entropy = expert_data[:, 2]
-
-    plt.figure(figsize=(10, 5))
-    plt.plot(temperature, label='Temperature', alpha=0.3, color="blue")
-    plt.plot(entropy_loss, label='Entropy Loss', alpha=0.3, color='red')
-    plt.plot(entropy, label='Entropy', alpha=0.3, color='orange')
-        # Determine the maximum x value for your plot
-    max_x_value = len(temperature)  # Assuming temperature array defines the time steps
-
-    # Add vertical lines every 14000 time steps
-    for x in range(0, max_x_value, 14000):
-        plt.axvline(x=x, color='grey', linestyle='--', alpha=0.5)
-
-    plt.title(f"{expert_names[i]} - Temperature, Entropy, and Entropy Loss")
-    plt.ylabel('Values')
-    plt.xlabel('Time Steps')
-    plt.legend(loc='lower right')  # Set legend location to bottom right
-    plt.tight_layout()
-
-# Show all plots
+# Show the figure
 plt.show()
