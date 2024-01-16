@@ -1,5 +1,5 @@
 Game:
-  participant_name: "nickRelu"
+  participant_name: "nickRelu098entropy"
   full_path: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/"
   #LfD arguments
   #lfd_transfer: False #true if we using learning from Demonstrations transfer learning
@@ -44,7 +44,7 @@ SAC:
 # The game in splitted in training batches. Each batch consists of `test:max_episodes` testing episodes and `learn_every_n_episodes` training episodes.  
 # After each batch is completed, the model is trained. This procedure is repeated until `max_episodes` training episodes have been completed. 
 Experiment:
-  max_episodes: 10  #50 Total training episodes per game #70 PPR 50 LfD### 
+  max_episodes: 50  #50 Total training episodes per game #70 PPR 50 LfD### 
   max_duration: 30 #30 Max duration of an episode (in seconds). An episode ends if the ball hits the target or if we reach the time limit
   test_interval: 10 # Test the current model after `test_interval` episodes
   action_duration: 0.2 # Time duration between consecutive RL agent actions
@@ -52,7 +52,7 @@ Experiment:
   start_training_on_episode: 10 # Will not train the agent before this trial
   stop_random_agent: 0 #10 Stop using random agent on this trial and start using SAC####
   learn_every_n_episodes: 10 # Perform offline gradient updates after every `learn_every_n_episodes` episodes
-  total_update_cycles: 14000  #7000 Total number of offline gradient updates throughout the whole experiment
+  total_update_cycles: 70000  #7000 Total number of offline gradient updates throughout the whole experiment
   reward_scale: 2 # Scale for the reward
   number_of_agent_actions: 3 # number of discrete actions
   win_reward: 10 # reward at win

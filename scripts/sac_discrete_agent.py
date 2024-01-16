@@ -18,7 +18,7 @@ class DiscreteSACAgent:
         self.alpha = rospy.get_param('rl_control/SAC/alpha', 100)
         self.beta = rospy.get_param('rl_control/SAC/beta', 100)
         #self.target_entropy = rospy.get_param('rl_control/SAC/target_entropy_ratio', 100)
-        #self.target_entropy_ratio= 0.75 ##########################################################this is what we change for the entropy
+        self.target_entropy_ratio= 0.98 ##########################################################this is what we change for the entropy
         self.update_interval = update_interval
         self.buffer_max_size = buffer_max_size
         self.scale = reward_scale
@@ -66,8 +66,8 @@ class DiscreteSACAgent:
         # target -> maximum entropy (same prob for each action)
         # - log ( 1 / A) = log A
         # self.target_entropy = -np.log(1.0 / action_dim) * self.target_entropy_ratio
-        #self.target_entropy = np.log(3) * self.target_entropy_ratio
-        self.target_entropy = 0.4
+        self.target_entropy = np.log(3) * self.target_entropy_ratio
+        #self.target_entropy = 0.4
         #print(self.target_entropy)
 
         self.log_alpha = torch.zeros(1, requires_grad=True, device=device)

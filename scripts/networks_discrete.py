@@ -183,7 +183,7 @@ class Actor(nn.Module):
             nn.Linear(state_dim, n_hidden_units),
             nn.ReLU(),
             nn.Linear(n_hidden_units, n_hidden_units),
-            nn.ReLu(),
+            nn.ReLU(),
             nn.Linear(n_hidden_units, action_dim)
         ).apply(init_weights)
 
