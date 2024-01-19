@@ -37,6 +37,9 @@ class RL_Control:
 						lfd_initialized_agent_dir = rospy.get_param("/rl_control/Game/lfd_initialized_agent_dir","dir")
 						self.agent = get_SAC_agent(observation_space=[4], chkpt_dir = lfd_initialized_agent_dir)
 						rospy.logwarn("Successfully loaded model at {} for  LFD initialization".format(lfd_initialized_agent_dir))
+						#initialized_agent_dir = rospy.get_param("/rl_control/Game/initialized_agent_dir","dir")
+						#self.agent = get_SAC_agent(observation_space=[4], chkpt_dir = initialized_agent_dir)
+						#rospy.logwarn("Successfully loaded model at {} for initialization".format(initialized_agent_dir))
 					else : #here is the simple initialized for no transfer or for expert
 						initialized_agent_dir = rospy.get_param("/rl_control/Game/initialized_agent_dir","dir")
 						self.agent = get_SAC_agent(observation_space=[4], chkpt_dir = initialized_agent_dir)
