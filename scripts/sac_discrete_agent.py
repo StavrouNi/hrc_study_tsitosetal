@@ -48,7 +48,7 @@ class DiscreteSACAgent:
         # The above 3 lines are for the LfD participants gameplay to initialize the dual buffer
         self.demo_data = rospy.get_param("rl_control/Game/load_demonstrations_data_dir","opt/ros/catkin_ws/src/hrc_study_tsitosetal/buffers/demo_buffer.npy")
         self.lfd_participant_gameplay = rospy.get_param('rl_control/Game/lfd_participant_gameplay', False)
-        self.percentages =  [ 0.8, 0.6, 0.4, 0.2, 0.1]   # Because we give the first 
+        self.percentages =  [ 0.8, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]   # Because we give the first 
         self.target_critic = Critic(self.input_dims, self.n_actions, self.layer1_size, chkpt_dir=self.chkpt_dir).to(
             device)
 

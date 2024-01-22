@@ -469,8 +469,8 @@ def wait_for_keypress():
 def game_loop(game):
 	if game.train_model:
 		rospy.loginfo('Training')
-		#game.test() # test with random agent initial games first 10 games	
-		#wait_for_keypress()
+		game.test() # test with random agent initial games first 10 games	
+		wait_for_keypress()
 		#if game.lfd_participant_gameplay: # TO_DO This might need to be removed because we load the agent with the initial updates from the start
 		#game.initiale_offline_update() # the first offline for LfD if the participant is playing
 		for i_episode in range(1, game.max_episodes+1):
