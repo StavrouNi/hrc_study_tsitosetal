@@ -1,5 +1,5 @@
 Game:
-  participant_name: "phase2MXB"
+  participant_name: "phase2AXG"
   full_path: "/home/ttsitos/catkin_ws/src/hrc_study_tsitosetal/"
   #LfD arguments
   #lfd_transfer: False #true if we using learning from Demonstrations transfer learning
