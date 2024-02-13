@@ -85,3 +85,21 @@ If you want to run the baseline version, replace the `roslaunch human_robot_coll
 The rest are default folders of a ROS package.
 
 [1] Christodoulou, Petros. "Soft actor-critic for discrete action settings." arXiv preprint arXiv:1910.07207 (2019).
+
+## Contributions
+
+In this fork, Deep Q-Learning from Demonstrations (DQfD) Transfer Learning method is integrated, which is designed to enhance the learning capabilities of the Reinforcement Learning (RL) agent within a collaborative task environment. Firthermore an initialized agent is integrated during the first interaction games, in order to reduce the performance variance of a random one.
+
+
+## Usage
+
+The configuration for the previously implemented probabilistic policy reuse (PPR) method remains unchanged. To enable the Learning from Demonstrations (LfD) Transfer Learning method, adjust the settings in the `config/rl_params.json` file as follows:
+
+- To record expert gameplay for later use with LfD, set `lfd_expert_gameplay` to `true`.
+- To have the agent interact using the LfD method, set `lfd_participant_gameplay` to `true`.
+- Expert gameplay sessions are saved automatically. To select specific sessions for LfD, use the `scripts/ExperttoDemoBufferTestFunc.py` script.
+- Define the percentages of expert demonstrations used during LfD in the `scripts/sac_discrete_agent.py` file.
+- To initialize the learning agent with prior knowledge instead of starting from scratch, set `initialized_agent` to `true` in the first game block.
+
+
+The branch compatible with the hardware setup is `init-pos+various-fix`. 
